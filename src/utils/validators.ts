@@ -54,6 +54,30 @@ export const planSchema = z.object({
 export type PlanFormValues = z.infer<typeof planSchema>;
 
 /**
+ * Role validation schema
+ */
+export const roleSchema = z.object({
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be less than 50 characters"),
+  slug: z
+    .string()
+    .min(2, "Slug must be at least 2 characters")
+    .max(50, "Slug must be less than 50 characters")
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Slug must only contain lowercase alphanumeric characters and hyphens"
+    ),
+  description: z
+    .string()
+    .max(200, "Description must be less than 200 characters")
+    .optional(),
+});
+
+export type RoleFormValues = z.infer<typeof roleSchema>;
+
+/**
  * Helper to generate slug from name
  */
 export function generateSlug(name: string): string {
