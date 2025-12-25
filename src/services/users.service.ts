@@ -53,6 +53,13 @@ export const usersService = {
   },
 
   /**
+   * Update a user
+   */
+  async update(id: number, data: Partial<AdminUser>) {
+    return api.put<AdminUser>(ENDPOINTS.byId(id), data);
+  },
+
+  /**
    * Get user details with related data
    */
   async getWithDetails(id: number) {

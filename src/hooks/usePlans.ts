@@ -11,7 +11,7 @@ export function usePlans() {
       useShallow((state) => ({
         plans: state.plans,
         loading: state.loading.plans,
-        fetchPlans: state.fetchPlans,
+        fetchPlans: (orgId?: number) => state.fetchPlans(orgId),
         addPlan: state.addPlan,
         updatePlan: state.updatePlan,
         deletePlan: state.deletePlan,

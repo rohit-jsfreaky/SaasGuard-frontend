@@ -60,7 +60,7 @@ interface DataState {
   addPlan: (plan: Plan) => void;
   updatePlan: (id: number, updates: Partial<Plan>) => void;
   deletePlan: (id: number) => void;
-  fetchPlans: () => Promise<void>;
+  fetchPlans: (orgId?: number) => Promise<void>;
 
   // Role actions
   setRoles: (roles: Role[]) => void;
@@ -199,16 +199,20 @@ export const useDataStore = create<DataState>((set, get) => ({
       plans: state.plans.filter((p) => p.id !== id),
     })),
 
-  fetchPlans: async () => {
+  fetchPlans: async (orgId) => {
     const { setLoading, setError, setPlans, filters } = get();
     setLoading("plans", true);
     setError("plans", null);
 
     try {
+      // If orgId is provided, we might want to filter by it if plans are org-specific
+      // Currently plans might be global, but let's support the pattern
+      // Assuming plansService.getAll respects some filtering or returns all valid plans
       const response = await plansService.getAll({
         search: filters.search || undefined,
         sortBy: filters.sortBy,
         sortOrder: filters.sortOrder,
+        organizationId: orgId,
       });
       setPlans(response.data.plans);
     } catch (error) {

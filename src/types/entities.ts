@@ -111,6 +111,7 @@ export interface AdminUser extends BaseEntity {
   email: string;
   clerkId: string;
   orgId?: number;
+  planId?: number;
   roles?: Role[];
   usage?: Usage[];
   overrides?: Override[];
