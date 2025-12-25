@@ -18,6 +18,14 @@ const ENDPOINTS = {
 };
 
 /**
+ * Create organization payload
+ */
+export interface CreateOrganizationInput {
+  name: string;
+  slug?: string;
+}
+
+/**
  * Update organization payload
  */
 export interface UpdateOrganizationInput {
@@ -29,6 +37,13 @@ export interface UpdateOrganizationInput {
  * Organizations Service
  */
 export const organizationsService = {
+  /**
+   * Create a new organization
+   */
+  async create(data: CreateOrganizationInput) {
+    return api.post<Organization>(ENDPOINTS.base, data);
+  },
+
   /**
    * Get organization by ID
    */

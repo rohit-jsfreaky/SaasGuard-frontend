@@ -1,8 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrgSettingsForm } from "@/components/settings/OrgSettingsForm";
 import { AdminManagement } from "@/components/settings/AdminManagement";
+import { CreateOrganizationModal } from "@/components/organizations";
 import { useOrgSettings } from "@/hooks/useOrgSettings";
 import { useAuthStore } from "@/store/auth.store";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Building2 } from "lucide-react";
 
 export default function Settings() {
   const { organization, admins, loading, updateOrg, addAdmin, removeAdmin } =
@@ -10,6 +14,9 @@ export default function Settings() {
 
   const currentUser = useAuthStore((state) => state.currentUser);
   const isAuthLoading = useAuthStore((state) => state.isLoading);
+  const setOrganization = useAuthStore((state) => state.setOrganization);
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   if (isAuthLoading || (organization === null && loading.org)) {
     return (
@@ -24,11 +31,23 @@ export default function Settings() {
   if (!organization) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4">
+        <Building2 className="h-16 w-16 text-muted-foreground" />
         <h2 className="text-2xl font-bold">No Organization Found</h2>
         <p className="text-muted-foreground text-center max-w-md">
-          You are not currently part of any organization. Please contact your
-          administrator or create a new organization.
+          You are not currently part of any organization. Create your first
+          organization to get started.
         </p>
+        <Button onClick={() => setIsCreateModalOpen(true)} size="lg">
+          <Building2 className="mr-2 h-4 w-4" />
+          Create Organization
+        </Button>
+        <CreateOrganizationModal
+          open={isCreateModalOpen}
+          onOpenChange={setIsCreateModalOpen}
+          onSuccess={(org) => {
+            setOrganization(org);
+          }}
+        />
       </div>
     );
   }

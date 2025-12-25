@@ -3,6 +3,7 @@
  * Main overview page with metrics and charts
  */
 
+import { useState } from "react";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import {
   MetricCard,
@@ -17,29 +18,42 @@ import {
   Shield,
   Activity,
   RefreshCw,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { useOrganization } from "@/hooks/useOrganization";
+import { CreateOrganizationModal } from "@/components/organizations";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function Dashboard() {
-  const { orgId } = useOrganization();
+  const { hasOrganization } = useOrganization();
+  const setOrganization = useAuthStore((state) => state.setOrganization);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   const { data, isLoading, error, refresh, lastUpdated } = useDashboardData();
 
-  if (!orgId) {
+  if (!hasOrganization) {
     return (
-      <div className="flex flex-col items-center justify-center h-[60vh] gap-4 text-center">
-        <div className="bg-muted p-4 rounded-full">
-          <Briefcase className="h-8 w-8 text-muted-foreground" />
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold">No Organization Selected</h2>
-          <p className="text-muted-foreground max-w-sm mt-2">
-            Please select an organization from the header to view metrics and
-            mange your subscription.
-          </p>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <Building2 className="h-16 w-16 text-muted-foreground" />
+        <h2 className="text-xl font-semibold">No Organization Selected</h2>
+        <p className="text-muted-foreground text-center max-w-md">
+          Create your first organization to access the admin dashboard and
+          manage your SaaS features.
+        </p>
+        <Button onClick={() => setIsCreateModalOpen(true)} size="lg">
+          <Building2 className="mr-2 h-4 w-4" />
+          Create Organization
+        </Button>
+        <CreateOrganizationModal
+          open={isCreateModalOpen}
+          onOpenChange={setIsCreateModalOpen}
+          onSuccess={(org) => {
+            setOrganization(org);
+          }}
+        />
       </div>
     );
   }

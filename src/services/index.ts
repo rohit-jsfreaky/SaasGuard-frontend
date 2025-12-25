@@ -11,3 +11,4 @@ export * from "./overrides.service";
 export * from "./users.service";
 export * from "./permissions.service";
 export * from "./dashboard.service";
+export * from "./organizations.service";
