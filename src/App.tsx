@@ -19,6 +19,7 @@ const Roles = lazy(() => import("@/pages/Roles"));
 const RoleDetail = lazy(() => import("@/pages/RoleDetail"));
 const Users = lazy(() => import("@/pages/Users"));
 const UserDetail = lazy(() => import("@/pages/UserDetail"));
+const Settings = lazy(() => import("./pages/Settings"));
 const Overrides = lazy(() => import("@/pages/Overrides"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
@@ -75,6 +76,7 @@ function App() {
                 <Route path="/roles/:id" element={<RoleDetail />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/users/:id" element={<UserDetail />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="/overrides" element={<Overrides />} />
 
                 {/* Placeholders for routes in sidebar */}

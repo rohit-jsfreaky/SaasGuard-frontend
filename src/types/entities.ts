@@ -116,3 +116,11 @@ export interface AdminUser extends BaseEntity {
   usage?: Usage[];
   overrides?: Override[];
 }
+
+/**
+ * Organization entity
+ */
+export interface Organization extends BaseEntity {
+  name: string;
+  slug: string;
+}

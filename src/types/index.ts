@@ -13,4 +13,19 @@ export * from "./auth";
 export * from "./permissions";
 
 // Entity types
-export * from "./entities";
+// Export entities manually to avoid conflicts if needed, or rely on specific imports
+// export * from "./entities"; // Commented out to avoid collision if Organization is in both
+export type {
+  BaseEntity,
+  Feature,
+  Plan,
+  PlanFeature,
+  PlanWithFeatures,
+  Role,
+  RolePermission,
+  RoleWithPermissions,
+  Override,
+  Usage,
+  AdminUser,
+  Organization,
+} from "./entities";
