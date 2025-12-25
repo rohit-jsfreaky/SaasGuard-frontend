@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Features = lazy(() => import("@/pages/Features"));
 const Plans = lazy(() => import("@/pages/Plans"));
+const PlanDetail = lazy(() => import("@/pages/PlanDetail"));
 const Roles = lazy(() => import("@/pages/Roles"));
 const Overrides = lazy(() => import("@/pages/Overrides"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -66,6 +67,7 @@ function App() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/features" element={<Features />} />
                 <Route path="/plans" element={<Plans />} />
+                <Route path="/plans/:id" element={<PlanDetail />} />
                 <Route path="/roles" element={<Roles />} />
                 <Route path="/overrides" element={<Overrides />} />
 

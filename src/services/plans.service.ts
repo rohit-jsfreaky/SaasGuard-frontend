@@ -143,6 +143,18 @@ export const plansService = {
   async setLimit(planId: number, featureSlug: string, limitValue: number) {
     return api.put<void>(ENDPOINTS.limits(planId), { featureSlug, limitValue });
   },
+
+  /**
+   * Get users assigned to a plan
+   */
+  async getUsers(planId: number, params?: QueryParams) {
+    // Assuming backend endpoint /plans/:id/users exists or using users service with filter
+    // Based on standard REST:
+    return api.get<import("@/services/users.service").UsersListResponse>(
+      `/api/v1/admin/plans/${planId}/users`,
+      params
+    );
+  },
 };
 
 export default plansService;
