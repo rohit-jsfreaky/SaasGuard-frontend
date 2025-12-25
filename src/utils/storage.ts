@@ -1,63 +1,63 @@
 /**
- * Local Storage Utilities
- * Safe wrappers for browser storage
+ * Get value from localStorage
+ * @param key - The key to retrieve
  */
-
-const PREFIX = "saasguard_";
-
-/**
- * Get item from localStorage with type safety
- */
-export function getStorageItem<T>(key: string): T | null {
+export function getFromStorage<T>(key: string): T | null {
+  if (typeof window === "undefined") return null;
   try {
-    const item = localStorage.getItem(`${PREFIX}${key}`);
+    const item = window.localStorage.getItem(key);
     return item ? JSON.parse(item) : null;
-  } catch {
-    console.error(`Error reading from localStorage: ${key}`);
+  } catch (error) {
+    console.error(`Error getting key "${key}" from localStorage:`, error);
     return null;
   }
 }
 
 /**
- * Set item in localStorage
+ * Set value in localStorage
+ * @param key - The key to set
+ * @param value - The value to set (will be JSON stringified)
  */
-export function setStorageItem<T>(key: string, value: T): void {
+export function setToStorage(key: string, value: any): void {
+  if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(`${PREFIX}${key}`, JSON.stringify(value));
-  } catch {
-    console.error(`Error writing to localStorage: ${key}`);
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error(`Error setting key "${key}" to localStorage:`, error);
   }
 }
 
 /**
- * Remove item from localStorage
+ * Remove value from localStorage
+ * @param key - The key to remove
  */
-export function removeStorageItem(key: string): void {
+export function removeFromStorage(key: string): void {
+  if (typeof window === "undefined") return;
   try {
-    localStorage.removeItem(`${PREFIX}${key}`);
-  } catch {
-    console.error(`Error removing from localStorage: ${key}`);
+    window.localStorage.removeItem(key);
+  } catch (error) {
+    console.error(`Error removing key "${key}" from localStorage:`, error);
   }
 }
 
 /**
- * Clear all SaaS Guard items from localStorage
+ * Clear all localStorage
  */
 export function clearStorage(): void {
+  if (typeof window === "undefined") return;
   try {
-    Object.keys(localStorage)
-      .filter((key) => key.startsWith(PREFIX))
-      .forEach((key) => localStorage.removeItem(key));
-  } catch {
-    console.error("Error clearing localStorage");
+    window.localStorage.clear();
+  } catch (error) {
+    console.error("Error clearing localStorage:", error);
   }
 }
 
 /**
- * Storage keys enum
+ * Storage keys
  */
 export const StorageKeys = {
-  THEME: "theme",
-  SIDEBAR_COLLAPSED: "sidebar_collapsed",
-  LAST_ORGANIZATION: "last_organization",
-} as const;
+  THEME: "saasguard-theme",
+  SIDEBAR_COLLAPSED: "saasguard-sidebar-collapsed",
+  AUTH_TOKEN: "saasguard-auth-token",
+  USER: "saasguard-user",
+};

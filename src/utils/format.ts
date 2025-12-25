@@ -1,83 +1,70 @@
-/**
- * Format Utilities
- * Common formatting functions
- */
+import { format } from "date-fns";
 
 /**
- * Format a date string to locale format
+ * Format a date object to a string
+ * @param date - The date to format
+ * @param formatStr - The format string (default: "PP") e.g. "Dec 25, 2025"
  */
 export function formatDate(
-  date: string | Date,
-  options?: Intl.DateTimeFormatOptions
+  date: Date | string | number,
+  formatStr: string = "PP"
 ): string {
-  const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    ...options,
-  });
+  try {
+    return format(new Date(date), formatStr);
+  } catch (e) {
+    return "Invalid Date";
+  }
 }
 
 /**
- * Format a date string to relative time (e.g., "2 hours ago")
+ * Format a date object to a datetime string
+ * @param date - The date to format
+ * @param formatStr - The format string (default: "PP p") e.g. "Dec 25, 2025 15:32"
  */
-export function formatRelativeTime(date: string | Date): string {
-  const d = typeof date === "string" ? new Date(date) : date;
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffSecs = Math.floor(diffMs / 1000);
-  const diffMins = Math.floor(diffSecs / 60);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffSecs < 60) return "just now";
-  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
-  return formatDate(d);
+export function formatDateTime(
+  date: Date | string | number,
+  formatStr: string = "PP p"
+): string {
+  try {
+    return format(new Date(date), formatStr);
+  } catch (e) {
+    return "Invalid Date";
+  }
 }
 
 /**
  * Format a number with commas
+ * @param num - The number to format
  */
 export function formatNumber(num: number): string {
   return new Intl.NumberFormat("en-US").format(num);
 }
 
 /**
- * Format bytes to human-readable size
+ * Format bytes to human readable string
+ * @param bytes - The number of bytes
+ * @param decimals - Number of decimal places
  */
-export function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
+export function formatBytes(bytes: number, decimals: number = 2): string {
+  if (bytes === 0) return "0 Bytes";
+
   const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
 
 /**
- * Format a slug to human-readable text
+ * Format a number as a percentage
+ * @param num - The number to format (0-1 or 0-100 depending on expectations, handling 0-1 here as fractional)
  */
-export function slugToTitle(slug: string): string {
-  return slug
-    .split(/[-_]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-/**
- * Truncate text with ellipsis
- */
-export function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength)}...`;
-}
-
-/**
- * Format percentage
- */
-export function formatPercent(value: number, total: number): string {
-  if (total === 0) return "0%";
-  return `${Math.round((value / total) * 100)}%`;
+export function formatPercent(num: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "percent",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+  }).format(num);
 }

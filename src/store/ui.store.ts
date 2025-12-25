@@ -4,7 +4,7 @@
  */
 
 import { create } from "zustand";
-import { getStorageItem, setStorageItem, StorageKeys } from "@/utils/storage";
+import { getFromStorage, setToStorage, StorageKeys } from "@/utils/storage";
 
 /**
  * Theme type
@@ -102,7 +102,7 @@ interface UIState {
  * Get initial theme from storage or system preference
  */
 function getInitialTheme(): Theme {
-  const stored = getStorageItem<Theme>(StorageKeys.THEME);
+  const stored = getFromStorage<Theme>(StorageKeys.THEME);
   if (stored) return stored;
 
   if (typeof window !== "undefined") {
@@ -124,7 +124,7 @@ function applyTheme(theme: Theme) {
       window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   root.classList.toggle("dark", isDark);
-  setStorageItem(StorageKeys.THEME, theme);
+  setToStorage(StorageKeys.THEME, theme);
 }
 
 /**
@@ -141,11 +141,11 @@ export const useUIStore = create<UIState>((set, get) => ({
   // Sidebar
   sidebarOpen: true,
   sidebarCollapsed:
-    getStorageItem<boolean>(StorageKeys.SIDEBAR_COLLAPSED) ?? false,
+    getFromStorage<boolean>(StorageKeys.SIDEBAR_COLLAPSED) ?? false,
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   setSidebarCollapsed: (collapsed) => {
-    setStorageItem(StorageKeys.SIDEBAR_COLLAPSED, collapsed);
+    setToStorage(StorageKeys.SIDEBAR_COLLAPSED, collapsed);
     set({ sidebarCollapsed: collapsed });
   },
 

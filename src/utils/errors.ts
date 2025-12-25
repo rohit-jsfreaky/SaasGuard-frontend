@@ -1,80 +1,62 @@
-/**
- * Error Utilities
- * Error handling and formatting
- */
-
-import type { ApiError } from "@/types";
+// import { AxiosError } from "axios";
 
 /**
- * Application error class
+ * Format error message from various error types
+ * @param error - The error object
  */
-export class AppError extends Error {
-  public readonly code: string;
-  public readonly details?: Record<string, unknown>;
-
-  constructor(
-    message: string,
-    code: string = "APP_ERROR",
-    details?: Record<string, unknown>
-  ) {
-    super(message);
-    this.code = code;
-    this.details = details;
-    this.name = "AppError";
+export function formatErrorMessage(error: any): string {
+  if (typeof error === "string") return error;
+  if (error instanceof Error) return error.message;
+  // Handle Axios errors
+  if (error?.isAxiosError && error.response?.data) {
+    const data = error.response.data;
+    if (typeof data === "string") return data;
+    if (data.message) return data.message;
+    if (data.error) return data.error;
+    // Handle specific array of errors if common in your backend
+    if (Array.isArray(data.errors)) return data.errors.join(", ");
   }
+  return "An unknown error occurred";
 }
 
 /**
- * Extract error message from unknown error
+ * Check if error is a network error
  */
-export function getErrorMessage(error: unknown): string {
-  if (error instanceof AppError) {
-    return error.message;
-  }
-
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  if (isApiError(error)) {
-    return error.error.message;
-  }
-
-  if (typeof error === "string") {
-    return error;
-  }
-
-  return "An unexpected error occurred";
+export function isNetworkError(error: any): boolean {
+  return error instanceof Error && error.message === "Network Error";
 }
 
 /**
- * Check if error is an API error response
+ * Check if error is 401 Unauthorized
  */
-export function isApiError(error: unknown): error is ApiError {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "success" in error &&
-    error.success === false &&
-    "error" in error
-  );
+export function is401Error(error: any): boolean {
+  return error?.response?.status === 401;
 }
 
 /**
- * Format API error for display
+ * Check if error is 403 Forbidden
  */
-export function formatApiError(error: ApiError): string {
-  const { code, message } = error.error;
-  return `[${code}] ${message}`;
+export function is403Error(error: any): boolean {
+  return error?.response?.status === 403;
 }
 
 /**
- * Handle async errors in components
+ * Check if error is 404 Not Found
  */
-export function handleError(
-  error: unknown,
-  fallbackMessage = "An error occurred"
-): string {
-  console.error("Error:", error);
-  return getErrorMessage(error) || fallbackMessage;
+export function is404Error(error: any): boolean {
+  return error?.response?.status === 404;
+}
+
+/**
+ * Check if error is 429 Too Many Requests
+ */
+export function is429Error(error: any): boolean {
+  return error?.response?.status === 429;
+}
+
+/**
+ * Check if error is 500 Server Error
+ */
+export function is500Error(error: any): boolean {
+  return error?.response?.status && error.response.status >= 500;
 }
