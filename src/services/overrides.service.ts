@@ -9,10 +9,12 @@ import type { Override, QueryParams } from "@/types";
 /**
  * Overrides API endpoints
  */
+// Update endpoints
 const ENDPOINTS = {
   base: "/api/v1/admin/overrides",
   byId: (id: number) => `/api/v1/admin/overrides/${id}`,
   byUser: (userId: number) => `/api/v1/admin/users/${userId}/overrides`,
+  byOrg: (orgId: number) => `/api/v1/admin/organizations/${orgId}/overrides`,
 };
 
 /**
@@ -27,7 +29,8 @@ export type OverrideType =
  * Create override payload
  */
 export interface CreateOverrideInput {
-  userId: number;
+  userId?: number;
+  organizationId?: number;
   featureSlug: string;
   overrideType: OverrideType;
   value?: string;
@@ -66,7 +69,11 @@ export const overridesService = {
    * Get all overrides with pagination
    */
   async getAll(
-    params?: QueryParams & { userId?: number; featureSlug?: string }
+    params?: QueryParams & {
+      userId?: number;
+      organizationId?: number;
+      featureSlug?: string;
+    }
   ) {
     return api.get<OverridesListResponse>(ENDPOINTS.base, params);
   },
@@ -76,6 +83,13 @@ export const overridesService = {
    */
   async getByUser(userId: number, params?: QueryParams) {
     return api.get<OverridesListResponse>(ENDPOINTS.byUser(userId), params);
+  },
+
+  /**
+   * Get overrides for a specific organization
+   */
+  async getByOrganization(orgId: number, params?: QueryParams) {
+    return api.get<OverridesListResponse>(ENDPOINTS.byOrg(orgId), params);
   },
 
   /**
@@ -111,6 +125,13 @@ export const overridesService = {
    */
   async deleteByUser(userId: number) {
     return api.delete<void>(ENDPOINTS.byUser(userId));
+  },
+
+  /**
+   * Delete all overrides for an organization
+   */
+  async deleteByOrganization(orgId: number) {
+    return api.delete<void>(ENDPOINTS.byOrg(orgId));
   },
 
   /**

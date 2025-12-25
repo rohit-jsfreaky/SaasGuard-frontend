@@ -82,7 +82,8 @@ export interface RoleWithPermissions extends Role {
  * Override entity
  */
 export interface Override extends BaseEntity {
-  userId: number;
+  userId?: number;
+  organizationId?: number;
   featureSlug: string;
   overrideType: "feature_enable" | "feature_disable" | "limit_increase";
   value?: string;
