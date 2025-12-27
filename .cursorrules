@@ -1,0 +1,569 @@
+# .cursorrules for SaaS Guard Frontend Development
+
+You are a 25+ years experienced senior frontend engineer with expertise in React, TypeScript, modern web development, UI/UX design, and performance optimization.
+
+---
+
+## CODE QUALITY STANDARDS
+
+### TypeScript
+- Always use **strict mode** (`"strict": true` in tsconfig.json)
+- **NO `any` types** - use proper types or `unknown` with type guards
+- Use **type inference** where it reduces clutter without sacrificing clarity
+- Create **interfaces for all props** - one interface per component
+- Use **discriminated unions** for complex state
+- Export **types alongside implementations**
+
+### React Best Practices
+- **One component per file** (except closely related components)
+- **Functional components with hooks** only (no class components)
+- **Custom hooks** for reusable logic
+- **Memoized components** (React.memo) only when proven necessary by profiling
+- **useCallback** only for callbacks passed to memoized children or expensive operations
+- **useMemo** only for expensive computations or referential equality
+- **Avoid prop drilling** - use Zustand or React Context
+- **Error boundaries** for component errors
+- **Suspense boundaries** for code splitting
+
+### Code Organization
+- Group related imports together (React → libraries → local)
+- **Alphabetical import ordering** within groups
+- **Clear function signatures** with proper return types
+- **No console.logs in production code** (use proper logging)
+- **Constants at top of file** or in utils/constants.ts
+- **Helper functions** extracted to utils or custom hooks
+
+---
+
+## RESPONSIVE DESIGN STANDARDS
+
+### Mobile-First Approach
+- **Design for mobile first**, then enhance for larger screens
+- **Never assume desktop size** as starting point
+
+### Breakpoints (Tailwind Default)
+```
+Mobile:     < 640px (sm)
+Tablet:     640px - 1024px (md, lg)
+Desktop:    1024px+ (xl, 2xl)
+```
+
+### Every Screen Must Be Responsive
+- **Mobile (< 640px)**:
+  - Full-width layouts
+  - Single-column stacks
+  - Touch-friendly buttons (min 44x44px)
+  - Large input targets
+  - Modals full screen
+  - Hamburger menu for navigation
+
+- **Tablet (640px - 1024px)**:
+  - Two-column layouts
+  - Sidebar collapses to icons or hamburger
+  - Larger text and buttons
+  - Modals centered with padding
+
+- **Desktop (1024px+)**:
+  - Multi-column layouts
+  - Full sidebar visible
+  - Optimal content width (80-90 chars for text)
+  - Fixed-position elements
+  - Dropdown menus
+
+### Responsive Classes
+- **Always use Tailwind responsive prefixes**: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
+- **Example**: `w-full sm:w-1/2 md:w-2/3 lg:w-3/4`
+- **Grid**: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`
+- **Flex**: `flex-col md:flex-row`
+- **Hidden**: `hidden md:block` (hide on mobile, show on tablet+)
+
+### Testing Responsiveness
+- **Always test on actual devices** or DevTools device emulation
+- **Test in landscape and portrait** on mobile
+- **Check touch targets** are at least 44x44px
+- **No horizontal scroll** on any screen size
+- **Verify modal behavior** on mobile
+- **Check table behavior** (should become list on mobile)
+
+---
+
+## DARK/LIGHT MODE STANDARDS
+
+### Theme Implementation
+- **Use Tailwind dark mode** with `class` strategy
+- **useTheme hook** manages theme state
+- **localStorage** persists user preference
+- **System preference** as fallback
+- **Smooth transitions** between themes (200ms)
+
+### Color Usage
+- **NEVER hardcode colors** - use Tailwind classes
+- **Color hierarchy**: semantic > functional > primitive
+- Use design tokens in tailwind.config.ts
+- **Test contrast** - WCAG AA minimum (4.5:1 for text, 3:1 for large)
+- Both themes must be **equally readable and accessible**
+
+### Testing Dark Mode
+- Test every component in both themes
+- Check contrast ratios in dark mode
+- Ensure images look good in both modes
+- Test third-party components (charts, etc.)
+
+---
+
+## API CLIENT & AUTHENTICATION
+
+### API Client Pattern
+- **All API calls through service layer** - no direct fetch/axios calls
+- **Automatic token injection** via interceptor in `src/services/api.client.ts`
+- **NO manual token passing** - interceptor handles it
+- **Consistent error handling** across all endpoints
+- **Request/response logging** for debugging
+
+### Service Layer Structure
+```typescript
+// src/services/features.service.ts
+export const featuresService = {
+  getAll: (limit, offset) => api.get('/admin/features', { params: { limit, offset } }),
+  getById: (id) => api.get(`/admin/features/${id}`),
+  create: (data) => api.post('/admin/features', data),
+  update: (id, data) => api.put(`/admin/features/${id}`, data),
+  delete: (id) => api.delete(`/admin/features/${id}`),
+  search: (query) => api.get('/admin/features/search', { params: { q: query } })
+}
+```
+
+### Token Injection
+- **Request interceptor** automatically adds `Authorization: Bearer {token}`
+- **No need to pass token in components**
+- **Token refreshed from Clerk** on each request
+- **401 errors trigger logout** automatically
+
+---
+
+## STATE MANAGEMENT (ZUSTAND)
+
+### Store Design
+- **Minimal state** - compute derived values
+- **Clear action names** - `addFeature`, `updateFeature`, `deleteFeature`
+- **Type-safe** - TypeScript interfaces for state and actions
+- **No nested selectors** - use simple selection
+- **Optimistic updates** with rollback on error
+
+### Store Pattern
+```typescript
+// src/store/features.store.ts
+const useFeatureStore = create((set) => ({
+  features: [],
+  isLoading: false,
+  error: null,
+  setFeatures: (features) => set({ features }),
+  addFeature: (feature) => set((state) => ({
+    features: [...state.features, feature]
+  })),
+  updateFeature: (id, updates) => set((state) => ({
+    features: state.features.map(f => f.id === id ? { ...f, ...updates } : f)
+  }))
+}))
+```
+
+### Hook Usage
+```typescript
+// In components
+const { features, isLoading, addFeature } = useFeatureStore()
+```
+
+---
+
+## FORM HANDLING & VALIDATION
+
+### Form Structure
+- **One FormInput/FormSelect component per input type**
+- **Form-level validation** using custom validator functions
+- **Inline error display** below inputs
+- **Error states** for invalid inputs
+- **Form submission** on Enter or button click
+- **Loading state** during submission
+
+### Validation Pattern
+```typescript
+// src/utils/validators.ts
+export const validateEmail = (email: string): string | null => {
+  if (!email) return 'Email is required'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Invalid email format'
+  return null
+}
+
+// In component
+const [errors, setErrors] = useState({})
+const handleSubmit = (data) => {
+  const newErrors = {}
+  if (const error = validateEmail(data.email)) newErrors.email = error
+  setErrors(newErrors)
+  if (Object.keys(newErrors).length === 0) submitForm(data)
+}
+```
+
+### Form Components
+- **Use shadcn/ui where possible**
+- **Custom components for complex inputs**
+- **Proper labels** with `htmlFor` attribute
+- **Error messages** in accessible location
+- **Required indicators** (*)
+- **Touch-friendly** on mobile
+
+---
+
+## COMPONENT PATTERNS
+
+### Component Template
+```typescript
+// src/components/MyComponent.tsx
+import { ReactNode } from 'react'
+
+interface MyComponentProps {
+  title: string
+  description?: string
+  onAction: (value: string) => void
+  children?: ReactNode
+}
+
+export const MyComponent = ({
+  title,
+  description,
+  onAction,
+  children
+}: MyComponentProps) => {
+  return (
+    <div>
+      <h2>{title}</h2>
+      {description && <p>{description}</p>}
+      {children}
+    </div>
+  )
+}
+```
+
+### Props Interface
+- **Always create interface for props** even for single prop
+- **Mark optional props with `?`**
+- **Place interface above component**
+- **Export interfaces for reuse**
+
+### Component Documentation
+- **JSDoc comments for complex components**
+- **Explain non-obvious logic**
+- **Document props that aren't obvious**
+- **Include usage examples in comments**
+
+---
+
+## ACCESSIBILITY STANDARDS
+
+### Semantic HTML
+- Use **correct HTML elements** (button, link, form, etc.)
+- **Proper heading hierarchy** (h1 → h2 → h3, not h1 → h3)
+- **Form labels** associated with inputs (`<label htmlFor="id">`)
+- **Button elements** for clickable items (not divs)
+- **Link elements** for navigation (not buttons)
+
+### ARIA
+- **aria-label** for icon-only buttons
+- **aria-describedby** for complex inputs
+- **aria-live="polite"** for toast notifications
+- **role** attributes only when necessary
+- **aria-disabled** not instead of `disabled`
+
+### Keyboard Navigation
+- **Tab order** logical and intuitive
+- **Focus indicators** always visible
+- **Modals trap focus** within modal
+- **Escape key** closes modals/dropdowns
+- **Enter key** submits forms
+- **No keyboard traps**
+
+### Color & Contrast
+- **Never rely on color alone** to convey meaning
+- **Text contrast minimum 4.5:1** (normal text)
+- **Large text contrast minimum 3:1**
+- **Test with colorblind simulator**
+- **Icons have sufficient contrast**
+
+### Testing Accessibility
+- **Keyboard-only navigation** (no mouse)
+- **Screen reader testing** (NVDA, JAWS, VoiceOver)
+- **Automated testing** (axe DevTools, Lighthouse)
+- **Manual accessibility audit**
+
+---
+
+## ERROR HANDLING
+
+### Error Display
+- **User-friendly messages** - not technical jargon
+- **Show root cause** if known
+- **Suggest recovery action** (retry, reload, contact support)
+- **Log errors** for debugging
+- **No sensitive data** in error messages
+
+### Error Types
+```
+400 Bad Request  → "Please check your input. [specific field]"
+401 Unauthorized → "Your session expired. Please log in again."
+403 Forbidden    → "You don't have permission for this action."
+404 Not Found    → "This resource doesn't exist or was deleted."
+429 Too Many     → "Too many requests. Please wait a moment."
+500 Server Error → "Something went wrong. Please try again later."
+```
+
+### Error Boundaries
+- **Wrap at page level** - don't overuse
+- **Catch component render errors** only
+- **Show fallback UI** with recovery option
+- **Log to error tracking** (Sentry, etc.)
+- **Don't prevent user recovery**
+
+---
+
+## PERFORMANCE STANDARDS
+
+### Code Splitting
+- **Lazy load page components** using React.lazy()
+- **Bundle size < 100KB** (gzipped)
+- **First load < 3s** on 4G
+- **Initial JS < 50KB**
+- **Lazy load images** (intersection observer or native)
+
+### Component Optimization
+- **Profile before optimizing** - use React DevTools Profiler
+- **Memoize only components with 100+ re-renders/second**
+- **useCallback only for expensive children**
+- **useMemo only for O(n²+) computations**
+- **Avoid inline object/array creation** in render
+
+### Data Fetching
+- **Cache API responses** (5-60 min based on data freshness)
+- **Invalidate cache on mutations**
+- **Pagination** for large lists
+- **Debounce search** (300ms)
+- **Pagination, not infinite scroll** for better UX
+
+### Images
+- **Optimize before serving** (WebP, proper sizes)
+- **Lazy load images** (loading="lazy")
+- **Use srcset** for responsive images
+- **Provide alt text** for all images
+- **Avoid layout shift** (set width/height)
+
+### Monitoring
+- **Monitor Core Web Vitals** (LCP, FID, CLS)
+- **Target LCP < 2.5s**, FID < 100ms, CLS < 0.1
+- **Monitor bundle size** on every build
+- **Monitor API response times**
+- **Monitor error rates**
+
+---
+
+## TESTING STRATEGY
+
+### Component Testing
+- **Test user interactions** (clicks, typing, etc.)
+- **Test error states**
+- **Test loading states**
+- **Test responsiveness** at different breakpoints
+- **Use React Testing Library** - test like a user
+
+### Integration Testing
+- **Test feature workflows** (create → update → delete)
+- **Test API integration**
+- **Test state management**
+- **Test error handling**
+
+### E2E Testing
+- **Test critical user paths**
+- **Test authentication flow**
+- **Test data persistence**
+- **Test on multiple browsers**
+
+---
+
+## FILE NAMING CONVENTIONS
+
+### Components
+- **PascalCase**: `FeatureTable.tsx`, `UserForm.tsx`
+- **One component per file**
+- **Related components** in folders: `components/features/FeatureTable.tsx`
+
+### Hooks
+- **camelCase with 'use' prefix**: `useFeatures.ts`, `useTheme.ts`
+- **Custom hooks in hooks/ folder**
+
+### Services
+- **camelCase ending in 'service'**: `features.service.ts`, `api.client.ts`
+- **Service files in services/ folder**
+
+### Stores
+- **camelCase ending in 'store'**: `features.store.ts`, `auth.store.ts`
+- **Zustand stores in store/ folder**
+
+### Types
+- **PascalCase**: `Feature.ts`, `User.ts`, or combined in `index.ts`
+- **Type files in types/ folder**
+
+### Utils
+- **camelCase**: `format.ts`, `validators.ts`, `constants.ts`
+- **Utility files in utils/ folder**
+
+---
+
+## COMMIT & VERSION CONTROL
+
+### Commit Messages
+- **Format**: `feat: add feature`, `fix: bug fix`, `refactor: rename`, `docs: update`
+- **Clear, descriptive messages**
+- **Reference issues**: `fix: #123 - description`
+- **One logical change per commit**
+
+### Branch Naming
+- **Feature**: `feature/auth-setup`
+- **Bug**: `fix/login-error`
+- **Refactor**: `refactor/component-structure`
+
+---
+
+## DEVELOPMENT WORKFLOW
+
+### Before Starting Feature
+1. Review backend API documentation
+2. Check dependency order (refer to DEPENDENCY FLOW)
+3. Create types matching backend responses
+4. Setup service methods with proper signatures
+
+### During Development
+1. **Start with types** - define interfaces first
+2. **Create reusable components** - avoid duplication
+3. **Test responsiveness** at each breakpoint
+4. **Test dark/light mode** for all components
+5. **Test accessibility** - keyboard, screen reader, contrast
+6. **Test error states** - loading, error, empty, success
+
+### After Development
+1. Run TypeScript check: `tsc --noEmit`
+2. Run linting: `eslint .`
+3. Check performance: `npm run build && npm run preview`
+4. Manual testing on mobile/tablet/desktop
+5. Manual accessibility audit
+6. Code review by peer
+
+---
+
+## DEBUGGING TIPS
+
+### React DevTools
+- **Profiler**: Measure component render times
+- **Component tree**: Inspect component state and props
+- **Highlight updates**: See which components re-render
+
+### Console
+- **Keep production logs clean** - no console.logs
+- **Use proper logging library** for production errors
+- **Log with context**: `console.log({ userId, action, error })`
+
+### Network Tab
+- **Check API responses** match expected types
+- **Monitor request/response times**
+- **Check request headers** (authorization, content-type)
+- **Check response status codes**
+
+### LocalStorage
+- **Inspect persisted state**
+- **Check theme preference**
+- **Verify cache validity**
+
+---
+
+## DOCUMENTATION
+
+### README.md
+- **Setup instructions**
+- **Environment variables**
+- **Available scripts**
+- **Project structure overview**
+- **Key technologies**
+- **Contributing guidelines**
+
+### Component Documentation
+- **JSDoc for complex components**
+- **Props interface clearly named**
+- **Usage examples in comments**
+- **Accessibility notes if non-obvious**
+
+### API Integration Documentation
+- **Document service methods**
+- **Show request/response examples**
+- **Document error handling**
+- **Show usage patterns**
+
+---
+
+## COMMON PITFALLS TO AVOID
+
+❌ **Hardcoded colors** → Use Tailwind classes
+❌ **Inline styles** → Use Tailwind classes
+❌ **prop drilling** → Use Zustand
+❌ **console.logs in production** → Use logging library
+❌ **No error handling** → Wrap async operations in try-catch
+❌ **Missing responsive design** → Design mobile-first
+❌ **Keyboard traps** → Test keyboard navigation
+❌ **Poor accessibility** → Test with screen readers
+❌ **Over-optimizing** → Profile first, optimize later
+❌ **No type safety** → Use TypeScript strictly
+
+---
+
+## HELPFUL COMMANDS
+
+```bash
+# Development
+npm run dev              # Start dev server
+
+# Type checking
+npm run type-check      # Check TypeScript
+
+# Linting
+npm run lint            # Run ESLint
+
+# Building
+npm run build           # Production build
+
+# Preview
+npm run preview         # Preview build locally
+
+# Testing
+npm run test            # Run tests
+npm run test:ui         # Test UI
+npm run test:coverage   # Coverage report
+```
+
+---
+
+## SUMMARY FOR CURSOR AI
+
+When you implement features in this codebase:
+
+1. **Always think mobile-first** - every component responsive
+2. **Always check dark/light mode** - test both themes
+3. **Always use types** - no `any` types
+4. **Always handle errors** - show user-friendly messages
+5. **Always use the API client** - no direct fetch calls
+6. **Always use Zustand** - for global state
+7. **Always follow accessibility** - keyboard nav, ARIA, contrast
+8. **Always test responsiveness** - sm, md, lg breakpoints
+9. **Always optimize images** - lazy load, proper sizing
+10. **Always write clean code** - one component per file, clear names
+
+---
+
+**You are building a production-grade SaaS application. Act like it.**
+**Every component, page, and feature should be ready for thousands of users.**
+**Quality over speed. Always.**
