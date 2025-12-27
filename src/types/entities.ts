@@ -23,10 +23,8 @@ export interface Organization {
 export interface Feature {
   id: string;
   name: string;
-  key: string;
+  slug: string;
   description?: string;
-  type: 'boolean' | 'limit';
-  defaultValue: string | number | boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -37,7 +35,7 @@ export interface Plan {
   description?: string;
   price: number;
   currency: string;
-  interval: 'monthly' | 'yearly';
+  interval: "monthly" | "yearly";
   createdAt: string;
   updatedAt: string;
 }
@@ -53,13 +51,13 @@ export interface Role {
 
 export interface Override {
   id: string;
-  entityType: 'user' | 'organization';
-  entityId: string; // This might be number if it refers to User/Org ID, but let's keep string for now or check usage. 
-  // Actually, if User.id is number, entityId should probably be number or string depending on implementation. 
-  // The prompt says "User/Org Name" in columns, but ID in backend. 
-  // Let's assume string for flexibility or number if strict. 
+  entityType: "user" | "organization";
+  entityId: string; // This might be number if it refers to User/Org ID, but let's keep string for now or check usage.
+  // Actually, if User.id is number, entityId should probably be number or string depending on implementation.
+  // The prompt says "User/Org Name" in columns, but ID in backend.
+  // Let's assume string for flexibility or number if strict.
   // Given User.id is number, let's make entityId string | number to be safe, or string if we cast.
-  // Backend usually uses string for polymorphic IDs or specific columns. 
+  // Backend usually uses string for polymorphic IDs or specific columns.
   // Let's stick to string for IDs in general unless specified otherwise, but User/Org are numbers.
   // Let's use string | number for entityId to be safe.
   featureId: string;

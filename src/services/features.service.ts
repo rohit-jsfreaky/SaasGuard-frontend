@@ -2,8 +2,12 @@ import api from './api.client';
 import type { Feature } from '@/types/entities';
 
 export const featuresService = {
-  getAll: (limit = 50, offset = 0) => 
-    api.get<Feature[]>('/admin/features', { params: { limit, offset } }),
+  getAll: (page = 1, limit = 10, search?: string) => {
+    const offset = (page - 1) * limit;
+    const params: any = { limit, offset };
+    if (search) params.search = search;
+    return api.get<Feature[]>('/admin/features', { params });
+  },
   
   getById: (id: string) => 
     api.get<Feature>(`/admin/features/${id}`),
