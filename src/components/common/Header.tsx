@@ -1,8 +1,9 @@
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
-import { BreadcrumbNav } from "./BreadcrumbNav"
-import { ThemeToggle } from "./ThemeToggle"
-import { UserNav } from "./UserNav"
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { BreadcrumbNav } from "./BreadcrumbNav";
+import { ThemeToggle } from "./ThemeToggle";
+import { UserNav } from "./UserNav";
+import { OrganizationSwitcher } from "./OrganizationSwitcher";
 
 export function Header() {
   return (
@@ -12,10 +13,12 @@ export function Header() {
         <Separator orientation="vertical" className="mr-2 h-4" />
         <BreadcrumbNav />
       </div>
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-3">
+        <OrganizationSwitcher />
+        <Separator orientation="vertical" className="h-6" />
         <ThemeToggle />
         <UserNav />
       </div>
     </header>
-  )
+  );
 }

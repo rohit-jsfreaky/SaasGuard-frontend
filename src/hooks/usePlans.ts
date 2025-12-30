@@ -1,17 +1,20 @@
 import { useEffect } from "react";
 import { usePlansStore } from "@/store/plans.store";
-import { useAuth } from "./useAuth";
+import { useOrganizationStore } from "@/store/organization.store";
 
 export const usePlans = () => {
   const store = usePlansStore();
-  const { user } = useAuth();
+  const { currentOrganization } = useOrganizationStore();
 
-  // Set organization ID when user is available
+  // Set organization ID when current org changes
   useEffect(() => {
-    if (user?.organizationId && store.organizationId !== user.organizationId) {
-      store.setOrganizationId(user.organizationId);
+    if (
+      currentOrganization?.id &&
+      store.organizationId !== currentOrganization.id
+    ) {
+      store.setOrganizationId(currentOrganization.id);
     }
-  }, [user?.organizationId]);
+  }, [currentOrganization?.id]);
 
   // Fetch plans when organization is set and not yet fetched
   useEffect(() => {

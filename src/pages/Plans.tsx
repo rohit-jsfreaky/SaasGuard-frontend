@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Plus, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PlanTable } from "@/components/plans/PlanTable";
@@ -32,9 +32,13 @@ export default function Plans() {
   if (!organizationId) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in-50">
-        <h3 className="mt-4 text-lg font-semibold">No Organization</h3>
-        <p className="mb-4 mt-2 text-sm text-muted-foreground">
-          Please ensure you are part of an organization to manage plans.
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent">
+          <Building2 className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <h3 className="mt-4 text-lg font-semibold">No Organization Selected</h3>
+        <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-md">
+          To manage plans, you need to select or create an organization. Use the
+          organization dropdown in the header to create your first organization.
         </p>
       </div>
     );

@@ -26,6 +26,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { plansService } from "@/services/plans.service";
 import type { Plan, PlanFeature, PlanLimit } from "@/types/entities";
 import { toast } from "sonner";
@@ -45,6 +55,13 @@ export default function PlanDetail() {
   const [selectedFeature, setSelectedFeature] = useState<PlanFeature | null>(
     null
   );
+
+  // Confirmation dialogs state
+  const [featureToRemove, setFeatureToRemove] = useState<PlanFeature | null>(
+    null
+  );
+  const [limitToRemove, setLimitToRemove] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchPlanData = async () => {
     if (!planId) return;
@@ -88,27 +105,35 @@ export default function PlanDetail() {
     }
   };
 
-  const handleRemoveFeature = async (feature: PlanFeature) => {
-    if (!planId) return;
+  const confirmRemoveFeature = async () => {
+    if (!planId || !featureToRemove) return;
 
+    setIsDeleting(true);
     try {
-      await plansService.removeFeature(Number(planId), feature.id);
+      await plansService.removeFeature(Number(planId), featureToRemove.id);
       toast.success("Feature removed from plan");
       fetchPlanData();
     } catch (err: any) {
       toast.error("Failed to remove feature");
+    } finally {
+      setIsDeleting(false);
+      setFeatureToRemove(null);
     }
   };
 
-  const handleRemoveLimit = async (featureSlug: string) => {
-    if (!planId) return;
+  const confirmRemoveLimit = async () => {
+    if (!planId || !limitToRemove) return;
 
+    setIsDeleting(true);
     try {
-      await plansService.removeLimit(Number(planId), featureSlug);
+      await plansService.removeLimit(Number(planId), limitToRemove);
       toast.success("Limit removed (now unlimited)");
       fetchPlanData();
     } catch (err: any) {
       toast.error("Failed to remove limit");
+    } finally {
+      setIsDeleting(false);
+      setLimitToRemove(null);
     }
   };
 
@@ -244,7 +269,7 @@ export default function PlanDetail() {
                               variant="ghost"
                               size="icon"
                               className="text-destructive hover:text-destructive"
-                              onClick={() => handleRemoveFeature(feature)}
+                              onClick={() => setFeatureToRemove(feature)}
                               title="Remove Feature"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -298,7 +323,7 @@ export default function PlanDetail() {
                           variant="ghost"
                           size="icon"
                           className="text-destructive hover:text-destructive"
-                          onClick={() => handleRemoveLimit(limit.featureSlug)}
+                          onClick={() => setLimitToRemove(limit.featureSlug)}
                           title="Remove Limit"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -334,6 +359,72 @@ export default function PlanDetail() {
         }
         onSuccess={fetchPlanData}
       />
+
+      {/* Remove Feature Confirmation */}
+      <AlertDialog
+        open={!!featureToRemove}
+        onOpenChange={() => setFeatureToRemove(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Feature</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove
+              <span className="font-semibold text-foreground">
+                {" "}
+                "{featureToRemove?.name}"{" "}
+              </span>
+              from this plan? This will also remove any associated limits.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                confirmRemoveFeature();
+              }}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Removing..." : "Remove"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Remove Limit Confirmation */}
+      <AlertDialog
+        open={!!limitToRemove}
+        onOpenChange={() => setLimitToRemove(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Limit</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove the limit for
+              <span className="font-semibold text-foreground font-mono">
+                {" "}
+                "{limitToRemove}"{" "}
+              </span>
+              ? This feature will become unlimited.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                confirmRemoveLimit();
+              }}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Removing..." : "Remove Limit"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
