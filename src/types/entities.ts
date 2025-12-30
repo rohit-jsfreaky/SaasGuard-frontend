@@ -30,14 +30,27 @@ export interface Feature {
 }
 
 export interface Plan {
-  id: string;
+  id: number;
   name: string;
+  slug: string;
   description?: string;
-  price: number;
-  currency: string;
-  interval: "monthly" | "yearly";
+  organizationId: number;
   createdAt: string;
   updatedAt: string;
+  features?: PlanFeature[];
+}
+
+export interface PlanFeature {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  enabled: boolean;
+}
+
+export interface PlanLimit {
+  featureSlug: string;
+  maxLimit: number;
 }
 
 export interface Role {
