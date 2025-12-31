@@ -38,6 +38,7 @@ export interface Plan {
   createdAt: string;
   updatedAt: string;
   features?: PlanFeature[];
+  featuresCount?: number;
 }
 
 export interface PlanFeature {
@@ -54,12 +55,16 @@ export interface PlanLimit {
 }
 
 export interface Role {
-  id: string;
+  id: number;
   name: string;
+  slug: string;
   description?: string;
-  isSystem?: boolean;
+  organizationId: number;
   createdAt: string;
   updatedAt: string;
+  permissions?: string[];
+  assignedAt?: string;
+  permissionsCount?: number;
 }
 
 export interface Override {

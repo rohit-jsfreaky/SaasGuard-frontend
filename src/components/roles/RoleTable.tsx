@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Eye, ArrowUpDown } from "lucide-react";
-import type { Plan } from "@/types/entities";
+import type { Role } from "@/types/entities";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Pagination,
@@ -21,11 +21,11 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface PlanTableProps {
-  plans: Plan[];
+interface RoleTableProps {
+  roles: Role[];
   isLoading: boolean;
-  onEdit: (plan: Plan) => void;
-  onDelete: (plan: Plan) => void;
+  onEdit: (role: Role) => void;
+  onDelete: (role: Role) => void;
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -34,15 +34,15 @@ interface PlanTableProps {
 type SortField = "name" | "slug" | "createdAt";
 type SortOrder = "asc" | "desc";
 
-export function PlanTable({
-  plans,
+export function RoleTable({
+  roles,
   isLoading,
   onEdit,
   onDelete,
   page,
   totalPages,
   onPageChange,
-}: PlanTableProps) {
+}: RoleTableProps) {
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
@@ -56,7 +56,7 @@ export function PlanTable({
     }
   };
 
-  const sortedPlans = [...plans].sort((a, b) => {
+  const sortedRoles = [...roles].sort((a, b) => {
     const aVal = a[sortField] || "";
     const bVal = b[sortField] || "";
     const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
@@ -72,7 +72,7 @@ export function PlanTable({
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Slug</TableHead>
-                <TableHead>Features</TableHead>
+                <TableHead>Permissions</TableHead>
                 <TableHead className="w-[150px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -100,15 +100,15 @@ export function PlanTable({
     );
   }
 
-  if (!plans || plans.length === 0) {
+  if (!roles || roles.length === 0) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in-50">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent">
           <Edit className="h-6 w-6 text-muted-foreground" />
         </div>
-        <h3 className="mt-4 text-lg font-semibold">No plans found</h3>
+        <h3 className="mt-4 text-lg font-semibold">No roles found</h3>
         <p className="mb-4 mt-2 text-sm text-muted-foreground">
-          Get started by creating your first plan.
+          Get started by creating your first role.
         </p>
       </div>
     );
@@ -142,22 +142,22 @@ export function PlanTable({
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
-              <TableHead>Features</TableHead>
+              <TableHead>Permissions</TableHead>
               <TableHead className="w-[150px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedPlans.map((plan) => (
-              <TableRow key={plan.id}>
-                <TableCell className="font-medium">{plan.name}</TableCell>
-                <TableCell className="font-mono text-xs">{plan.slug}</TableCell>
-                <TableCell>{plan.featuresCount || 0}</TableCell>
+            {sortedRoles.map((role) => (
+              <TableRow key={role.id}>
+                <TableCell className="font-medium">{role.name}</TableCell>
+                <TableCell className="font-mono text-xs">{role.slug}</TableCell>
+                <TableCell>{role.permissionsCount || 0}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => navigate(`/plans/${plan.id}`)}
+                      onClick={() => navigate(`/roles/${role.id}`)}
                       title="View Details"
                     >
                       <Eye className="h-4 w-4" />
@@ -166,8 +166,8 @@ export function PlanTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => onEdit(plan)}
-                      title="Edit Plan"
+                      onClick={() => onEdit(role)}
+                      title="Edit Role"
                     >
                       <Edit className="h-4 w-4" />
                       <span className="sr-only">Edit</span>
@@ -176,8 +176,8 @@ export function PlanTable({
                       variant="ghost"
                       size="icon"
                       className="text-destructive hover:text-destructive"
-                      onClick={() => onDelete(plan)}
-                      title="Delete Plan"
+                      onClick={() => onDelete(role)}
+                      title="Delete Role"
                     >
                       <Trash2 className="h-4 w-4" />
                       <span className="sr-only">Delete</span>

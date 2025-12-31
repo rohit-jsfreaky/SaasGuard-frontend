@@ -9,6 +9,7 @@ import Features from "@/pages/Features";
 import Plans from "@/pages/Plans";
 import PlanDetail from "@/pages/PlanDetail";
 import Roles from "@/pages/Roles";
+import RoleDetail from "@/pages/RoleDetail";
 import Overrides from "@/pages/Overrides";
 import Users from "@/pages/Users";
 import Settings from "@/pages/Settings";
@@ -34,6 +35,7 @@ function App() {
                 <Route path="plans" element={<Plans />} />
                 <Route path="plans/:planId" element={<PlanDetail />} />
                 <Route path="roles" element={<Roles />} />
+                <Route path="roles/:roleId" element={<RoleDetail />} />
                 <Route path="overrides" element={<Overrides />} />
                 <Route path="users" element={<Users />} />
                 <Route path="settings" element={<Settings />} />
