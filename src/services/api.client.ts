@@ -60,21 +60,36 @@ class ApiClient {
       (error: AxiosError<ApiError>) => {
         const status = error.response?.status;
         const data = error.response?.data;
-        const message =
-          data?.message || error.message || "An unexpected error occurred";
 
-        console.error(`[API Error] ${status} ${error.config?.url}:`, message);
+        // Get user-friendly message based on status code
+        let message = data?.message || error.message;
 
-        if (status === 401) {
+        if (status === 400) {
+          message = data?.message || "Invalid input. Please check your data.";
+        } else if (status === 401) {
+          message = "Session expired. Please login again.";
           console.warn("Unauthorized access - token may have expired");
-          // The token getter will automatically get a fresh token on next request
         } else if (status === 403) {
+          message =
+            data?.message ||
+            "You don't have permission to perform this action.";
           console.warn("Permission denied");
+        } else if (status === 404) {
+          message = data?.message || "Resource not found.";
+        } else if (status === 409) {
+          message =
+            data?.message || "This operation conflicts with existing data.";
         } else if (status === 429) {
+          message = "Too many requests. Please wait a moment.";
           console.warn("Rate limit exceeded");
         } else if (status && status >= 500) {
+          message = "Server error. Please try again later.";
           console.error("Server error");
+        } else if (!status) {
+          message = "Network error. Please check your connection.";
         }
+
+        console.error(`[API Error] ${status} ${error.config?.url}:`, message);
 
         // Return a standardized error object
         return Promise.reject({
