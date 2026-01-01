@@ -13,6 +13,7 @@ import RoleDetail from "@/pages/RoleDetail";
 import Overrides from "@/pages/Overrides";
 import Users from "@/pages/Users";
 import UserDetail from "@/pages/UserDetail";
+import Usage from "@/pages/Usage";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 
@@ -40,6 +41,7 @@ function App() {
                 <Route path="overrides" element={<Overrides />} />
                 <Route path="users" element={<Users />} />
                 <Route path="users/:userId" element={<UserDetail />} />
+                <Route path="usage" element={<Usage />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
               </Route>

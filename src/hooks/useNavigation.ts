@@ -5,7 +5,8 @@ import {
   Users, 
   Shield, 
   Settings, 
-  UserCog
+  UserCog,
+  BarChart  
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
@@ -42,6 +43,11 @@ export const useNavigation = () => {
       title: "Users",
       href: "/users",
       icon: UserCog,
+    },
+    {
+      title: "Usage",
+      href: "/usage",
+      icon: BarChart,
     },
     {
       title: "Settings",
