@@ -1,0 +1,87 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface MetricCardProps {
+  icon: React.ReactNode;
+  label: string;
+  value: number | string;
+  trend?: {
+    value: number;
+    direction: "up" | "down";
+  };
+  actionLabel?: string;
+  onAction?: () => void;
+  className?: string;
+}
+
+export function MetricCard({
+  icon,
+  label,
+  value,
+  trend,
+  actionLabel,
+  onAction,
+  className,
+}: MetricCardProps) {
+  return (
+    <Card className={cn("hover:shadow-md transition-shadow", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {label}
+        </CardTitle>
+        <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground">
+          {icon}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">
+          {typeof value === "number" ? value.toLocaleString() : value}
+        </div>
+        {trend && (
+          <div
+            className={cn(
+              "flex items-center text-xs mt-1",
+              trend.direction === "up" ? "text-green-600" : "text-red-600"
+            )}
+          >
+            {trend.direction === "up" ? (
+              <TrendingUp className="h-3 w-3 mr-1" />
+            ) : (
+              <TrendingDown className="h-3 w-3 mr-1" />
+            )}
+            <span>{Math.abs(trend.value)}% from last month</span>
+          </div>
+        )}
+        {actionLabel && onAction && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="mt-3 -ml-2 text-xs"
+            onClick={onAction}
+          >
+            {actionLabel}
+            <ArrowRight className="h-3 w-3 ml-1" />
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function MetricCardSkeleton() {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-8 w-8 rounded-full" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-8 w-16 mb-2" />
+        <Skeleton className="h-3 w-32" />
+      </CardContent>
+    </Card>
+  );
+}
