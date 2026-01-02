@@ -89,7 +89,7 @@ export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
           />
           <Bar
             dataKey="usage"
-            fill="#3b82f6"
+            fill="hsl(var(--primary))"
             radius={[0, 4, 4, 0]}
             name="usage"
           />

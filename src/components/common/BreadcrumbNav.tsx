@@ -18,11 +18,6 @@ export function BreadcrumbNav() {
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link to="/">Home</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
         {breadcrumbs.map((crumb, index) => {
           const isLast = index === breadcrumbs.length - 1
           return (

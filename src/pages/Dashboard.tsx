@@ -73,10 +73,12 @@ export default function Dashboard() {
   // Loading state
   if (isLoading && !data) {
     return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">Overview of your organization</p>
+      <div className="space-y-8 max-w-7xl mx-auto w-full animate-in fade-in-50">
+        <div className="flex items-center justify-between space-y-2">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground">Overview of your organization</p>
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -85,8 +87,8 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="col-span-4">
             <CardHeader>
               <Skeleton className="h-5 w-32" />
             </CardHeader>
@@ -94,7 +96,7 @@ export default function Dashboard() {
               <Skeleton className="h-[300px]" />
             </CardContent>
           </Card>
-          <Card>
+          <Card className="col-span-3">
             <CardHeader>
               <Skeleton className="h-5 w-40" />
             </CardHeader>
@@ -121,8 +123,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 max-w-7xl mx-auto w-full animate-in fade-in-50">
+      <div className="flex items-center justify-between space-y-2">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">Overview of your organization</p>
@@ -173,13 +175,13 @@ export default function Dashboard() {
       </div>
 
       {/* Charts */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Plan Distribution</CardTitle>
             <CardDescription>Users per plan</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pl-2">
             <PlanDistributionChart
               data={data?.planDistribution || []}
               isLoading={isLoading}
@@ -187,7 +189,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Top Features by Usage</CardTitle>
             <CardDescription>Most used features</CardDescription>

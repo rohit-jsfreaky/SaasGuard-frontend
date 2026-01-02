@@ -80,31 +80,31 @@ export function RecentActivityList({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {activities.map((activity) => (
         <div
           key={`${activity.type}-${activity.id}`}
           className={cn(
-            "flex items-start gap-4 p-4 rounded-lg border",
-            "hover:bg-accent/50 transition-colors cursor-default"
+            "flex items-start gap-4 p-4 rounded-lg border bg-card",
+            "hover:bg-accent/50 transition-colors duration-200 cursor-default"
           )}
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
             {getActivityIcon(activity.type)}
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <p className="text-sm font-medium leading-none truncate">
+              <p className="text-sm font-medium leading-none truncate text-foreground">
                 {activity.description}
               </p>
               {getActivityBadge(activity.type)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
-              <Clock className="h-3 w-3" />
+            <div className="flex items-center text-xs text-muted-foreground">
+              <Clock className="mr-1 h-3 w-3" />
               {formatDistanceToNow(new Date(activity.timestamp), {
                 addSuffix: true,
               })}
-            </p>
+            </div>
           </div>
         </div>
       ))}

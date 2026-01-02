@@ -16,42 +16,42 @@ export const useNavigation = () => {
   const navItems = [
     {
       title: "Dashboard",
-      href: "/",
+      href: "/dashboard",
       icon: LayoutDashboard,
     },
     {
       title: "Features",
-      href: "/features",
+      href: "/dashboard/features",
       icon: Layers,
     },
     {
       title: "Plans",
-      href: "/plans",
+      href: "/dashboard/plans",
       icon: Briefcase,
     },
     {
       title: "Roles",
-      href: "/roles",
+      href: "/dashboard/roles",
       icon: Users,
     },
     {
       title: "Overrides",
-      href: "/overrides",
+      href: "/dashboard/overrides",
       icon: Shield,
     },
     {
       title: "Users",
-      href: "/users",
+      href: "/dashboard/users",
       icon: UserCog,
     },
     {
       title: "Usage",
-      href: "/usage",
+      href: "/dashboard/usage",
       icon: BarChart,
     },
     {
       title: "Settings",
-      href: "/settings",
+      href: "/dashboard/settings",
       icon: Settings,
     },
   ];
@@ -59,9 +59,9 @@ export const useNavigation = () => {
   const breadcrumbs = location.pathname
     .split("/")
     .filter((path) => path)
-    .map((path) => ({
+    .map((path, index, array) => ({
       title: path.charAt(0).toUpperCase() + path.slice(1),
-      href: `/${path}`,
+      href: "/" + array.slice(0, index + 1).join("/"),
     }));
 
   return {

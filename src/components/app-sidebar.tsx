@@ -10,27 +10,34 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { useNavigation } from "@/hooks/useNavigation"
-import { Link } from "react-router-dom"
-import { Command } from "lucide-react"
+} from "@/components/ui/sidebar";
+import { useNavigation } from "@/hooks/useNavigation";
+import { Link } from "react-router-dom";
 
 export function AppSidebar() {
-  const { navItems, currentPath } = useNavigation()
+  const { navItems, currentPath } = useNavigation();
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
+      <SidebarHeader className="pb-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild isActive={currentPath === "/"}>
-              <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
+            <SidebarMenuButton size="lg" asChild isActive={currentPath === "/dashboard"}>
+              <Link to="/dashboard">
+                <div className="flex aspect-square size-10 items-center justify-center rounded-xl text-sidebar-primary-foreground">
+                  <img
+                    src="/logo.png"
+                    alt="SaaS Guard"
+                    className="size-full object-contain drop-shadow-sm"
+                  />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">SaasGuard</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                <div className="grid flex-1 text-left leading-tight">
+                  <span className="truncate font-bold text-lg tracking-tight">
+                    SaaS Guard
+                  </span>
+                  <span className="truncate text-xs text-muted-foreground font-medium">
+                    Enterprise Edition
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -43,17 +50,23 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
-                const isActive = currentPath === item.href || (item.href !== "/" && currentPath.startsWith(item.href));
+                const isActive =
+                  currentPath === item.href ||
+                  (item.href !== "/" && currentPath.startsWith(item.href));
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild tooltip={item.title} isActive={isActive}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      isActive={isActive}
+                    >
                       <Link to={item.href}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
+                );
               })}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -64,5 +77,5 @@ export function AppSidebar() {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

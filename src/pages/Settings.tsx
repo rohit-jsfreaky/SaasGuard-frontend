@@ -5,6 +5,7 @@ import { useSettingsStore } from "@/store/settings.store";
 import { useAuth } from "@/hooks/useAuth";
 import { OrgSettingsForm } from "@/components/settings/OrgSettingsForm";
 import { AdminManagement } from "@/components/settings/AdminManagement";
+import { ApiKeyManagement } from "@/components/settings/ApiKeyManagement";
 
 export default function Settings() {
   const { currentOrganization } = useOrganizationStore();
@@ -33,12 +34,12 @@ export default function Settings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">
-          Manage your organization settings and administrators
+          Manage your organization settings, administrators, and API keys
         </p>
       </div>
 
@@ -53,6 +54,9 @@ export default function Settings() {
           currentUserId={user?.id}
         />
       </div>
+
+      {/* API Key Management */}
+      <ApiKeyManagement organizationId={currentOrganization.id} />
     </div>
   );
 }

@@ -15,7 +15,13 @@ interface PlanDistributionChartProps {
 }
 
 // Fallback colors if CSS vars not available
-const FALLBACK_COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6"];
+const COLORS = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+];
 
 export function PlanDistributionChart({
   data,
@@ -67,7 +73,7 @@ export function PlanDistributionChart({
             {chartData.map((_, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={FALLBACK_COLORS[index % FALLBACK_COLORS.length]}
+                fill={COLORS[index % COLORS.length]}
                 className="hover:opacity-80 transition-opacity cursor-pointer"
               />
             ))}
@@ -77,6 +83,7 @@ export function PlanDistributionChart({
               backgroundColor: "hsl(var(--popover))",
               borderColor: "hsl(var(--border))",
               borderRadius: "8px",
+              color: "hsl(var(--popover-foreground))",
             }}
             formatter={(value: any) => [
               `${value} users (${((value / totalUsers) * 100).toFixed(1)}%)`,

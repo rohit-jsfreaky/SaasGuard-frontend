@@ -27,39 +27,39 @@ export function MetricCard({
   className,
 }: MetricCardProps) {
   return (
-    <Card className={cn("hover:shadow-md transition-shadow", className)}>
+    <Card className={cn("hover:shadow-md transition-all duration-200", className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {label}
         </CardTitle>
-        <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground">
+        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
           {icon}
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
+        <div className="text-3xl font-bold tracking-tight">
           {typeof value === "number" ? value.toLocaleString() : value}
         </div>
         {trend && (
           <div
             className={cn(
-              "flex items-center text-xs mt-1",
-              trend.direction === "up" ? "text-green-600" : "text-red-600"
+              "flex items-center text-xs mt-2 font-medium",
+              trend.direction === "up" ? "text-emerald-600 dark:text-emerald-500" : "text-red-600 dark:text-red-500"
             )}
           >
             {trend.direction === "up" ? (
-              <TrendingUp className="h-3 w-3 mr-1" />
+              <TrendingUp className="h-3.5 w-3.5 mr-1" />
             ) : (
-              <TrendingDown className="h-3 w-3 mr-1" />
+              <TrendingDown className="h-3.5 w-3.5 mr-1" />
             )}
             <span>{Math.abs(trend.value)}% from last month</span>
           </div>
         )}
         {actionLabel && onAction && (
           <Button
-            variant="ghost"
+            variant="link"
             size="sm"
-            className="mt-3 -ml-2 text-xs"
+            className="mt-4 -ml-2 h-auto p-0 text-xs text-muted-foreground hover:text-primary"
             onClick={onAction}
           >
             {actionLabel}
