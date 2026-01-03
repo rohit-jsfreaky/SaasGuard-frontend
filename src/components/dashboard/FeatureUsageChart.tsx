@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -16,12 +17,21 @@ interface FeatureUsageChartProps {
 }
 
 export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   if (isLoading) {
     return (
-      <div className="h-[300px] space-y-4 p-4">
+      <div className="h-[250px] sm:h-[300px] space-y-4 p-4">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="flex items-center gap-4">
-            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-4 w-16 sm:w-24" />
             <Skeleton className="h-6 flex-1" />
           </div>
         ))}
@@ -31,16 +41,17 @@ export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
 
   if (!data || data.length === 0) {
     return (
-      <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+      <div className="h-[250px] sm:h-[300px] flex items-center justify-center text-muted-foreground">
         <p>No usage data available</p>
       </div>
     );
   }
 
+  const maxNameLength = isMobile ? 8 : 12;
   const chartData = data.map((feature) => ({
     name:
-      feature.featureName.length > 12
-        ? feature.featureName.substring(0, 12) + "..."
+      feature.featureName.length > maxNameLength
+        ? feature.featureName.substring(0, maxNameLength) + "..."
         : feature.featureName,
     fullName: feature.featureName,
     usage: feature.usage,
@@ -48,12 +59,17 @@ export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
   }));
 
   return (
-    <div className="h-[300px]">
+    <div className="h-[250px] sm:h-[300px]">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}
           layout="vertical"
-          margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+          margin={{
+            top: 5,
+            right: isMobile ? 10 : 30,
+            left: isMobile ? 0 : 20,
+            bottom: 5,
+          }}
         >
           <CartesianGrid
             strokeDasharray="3 3"
@@ -64,15 +80,15 @@ export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
           <XAxis
             type="number"
             tickFormatter={(value) => value.toLocaleString()}
-            tick={{ fill: "#9ca3af", fontSize: 12 }}
+            tick={{ fill: "#9ca3af", fontSize: isMobile ? 10 : 12 }}
             axisLine={{ stroke: "#4b5563" }}
             tickLine={{ stroke: "#4b5563" }}
           />
           <YAxis
             type="category"
             dataKey="name"
-            width={80}
-            tick={{ fill: "#9ca3af", fontSize: 12 }}
+            width={isMobile ? 60 : 80}
+            tick={{ fill: "#9ca3af", fontSize: isMobile ? 10 : 12 }}
             axisLine={{ stroke: "#4b5563" }}
             tickLine={{ stroke: "#4b5563" }}
           />
@@ -89,7 +105,7 @@ export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
               typeof value === "number" ? value.toLocaleString() : value,
               "Usage",
             ]}
-            labelFormatter={(_, payload: any) => {
+            labelFormatter={(_, payload) => {
               if (payload && payload[0]) {
                 return payload[0].payload.fullName;
               }

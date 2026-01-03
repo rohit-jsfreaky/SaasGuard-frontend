@@ -17,8 +17,15 @@ import { Link } from "react-router-dom";
 
 export function AppSidebar() {
   const { navItems, currentPath } = useNavigation();
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
+
+  const handleNavClick = () => {
+    // Close sidebar on mobile when clicking a nav item
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -30,7 +37,11 @@ export function AppSidebar() {
               asChild
               isActive={currentPath === "/dashboard"}
             >
-              <Link to="/dashboard" className="flex items-center gap-2">
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-2"
+                onClick={handleNavClick}
+              >
                 {isCollapsed ? (
                   <img
                     src="/saasguard_icon.png"
@@ -65,7 +76,7 @@ export function AppSidebar() {
                       tooltip={item.title}
                       isActive={isActive}
                     >
-                      <Link to={item.href}>
+                      <Link to={item.href} onClick={handleNavClick}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
