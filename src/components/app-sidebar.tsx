@@ -10,35 +10,40 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useNavigation } from "@/hooks/useNavigation";
 import { Link } from "react-router-dom";
 
 export function AppSidebar() {
   const { navItems, currentPath } = useNavigation();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="pb-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild isActive={currentPath === "/dashboard"}>
-              <Link to="/dashboard">
-                <div className="flex aspect-square size-10 items-center justify-center rounded-xl text-sidebar-primary-foreground">
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              isActive={currentPath === "/dashboard"}
+            >
+              <Link to="/dashboard" className="flex items-center gap-2">
+                {isCollapsed ? (
                   <img
-                    src="/logo.png"
+                    src="/saasguard_icon.png"
                     alt="SaaS Guard"
-                    className="size-full object-contain drop-shadow-sm"
+                    className="h-8 w-8 object-contain"
                   />
-                </div>
-                <div className="grid flex-1 text-left leading-tight">
-                  <span className="truncate font-bold text-lg tracking-tight">
-                    SaaS Guard
-                  </span>
-                  <span className="truncate text-xs text-muted-foreground font-medium">
-                    Enterprise Edition
-                  </span>
-                </div>
+                ) : (
+                  <img
+                    src="/saasguard_full.png"
+                    alt="SaaS Guard"
+                    className="h-16 w-auto object-contain"
+                  />
+                )}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
