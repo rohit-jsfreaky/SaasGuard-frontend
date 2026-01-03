@@ -160,7 +160,7 @@ export default function PlanDetail() {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center">
         <h3 className="text-lg font-semibold">Plan not found</h3>
-        <Button variant="link" onClick={() => navigate("/plans")}>
+        <Button variant="link" onClick={() => navigate("/dashboard/roles")}>
           Go back to plans
         </Button>
       </div>
@@ -170,7 +170,7 @@ export default function PlanDetail() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/plans")}>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard/plans")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>

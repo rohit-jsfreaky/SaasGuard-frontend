@@ -87,7 +87,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             <TableRow
               key={user.id}
               className="cursor-pointer hover:bg-accent/50"
-              onClick={() => navigate(`/users/${user.id}`)}
+              onClick={() => navigate(`/dashboard/users/${user.id}`)}
             >
               <TableCell>
                 <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
                   size="icon"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/users/${user.id}`);
+                    navigate(`/dashboard/users/${user.id}`);
                   }}
                   title="View User Details"
                 >

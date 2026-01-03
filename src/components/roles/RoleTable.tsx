@@ -157,7 +157,7 @@ export function RoleTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => navigate(`/roles/${role.id}`)}
+                      onClick={() => navigate(`/dashboard/roles/${role.id}`)}
                       title="View Details"
                     >
                       <Eye className="h-4 w-4" />

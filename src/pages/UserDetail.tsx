@@ -153,7 +153,7 @@ export default function UserDetail() {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center">
         <h3 className="text-lg font-semibold">User not found</h3>
-        <Button variant="link" onClick={() => navigate("/users")}>
+        <Button variant="link" onClick={() => navigate("/dashboard/users")}>
           Go back to users
         </Button>
       </div>
@@ -163,7 +163,7 @@ export default function UserDetail() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/users")}>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard/users")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
