@@ -71,9 +71,13 @@ export const usersService = {
     }),
 
   // Get user permissions (resolved)
-  getUserPermissions: (userId: number, organizationId: number) =>
+  getUserPermissions: (
+    userId: number,
+    organizationId: number,
+    planId?: number | null
+  ) =>
     api.get<UserPermissions>(`/users/${userId}/permissions`, {
-      params: { organizationId },
+      params: { organizationId, planId },
     }),
 
   // Get current user permissions
@@ -84,5 +88,5 @@ export const usersService = {
 
   // Get user overrides
   getUserOverrides: (userId: number) =>
-    api.get<Override[]>(`/admin/overrides/users/${userId}/overrides`),
+    api.get<Override[]>(`/admin/users/${userId}/overrides`),
 };

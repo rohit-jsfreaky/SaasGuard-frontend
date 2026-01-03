@@ -200,9 +200,11 @@ export const useUserDetailStore = create<UserDetailState>((set, get) => ({
 
   fetchUserPermissions: async (userId: number, organizationId: number) => {
     try {
+      const { plan } = get();
       const response = await usersService.getUserPermissions(
         userId,
-        organizationId
+        organizationId,
+        plan?.id ?? null
       );
       set({ permissions: response.data });
     } catch (err: any) {

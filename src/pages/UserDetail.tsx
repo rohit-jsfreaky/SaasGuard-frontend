@@ -163,7 +163,7 @@ export default function UserDetail() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/users")}>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard/users")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
@@ -247,7 +247,7 @@ export default function UserDetail() {
                 </div>
                 <Button size="sm" onClick={() => setIsAssignRoleOpen(true)}>
                   <Plus className="mr-2 h-4 w-4" />
-                  Assign Role
+                  {roles.length > 0 ? "Change Role" : "Assign Role"}
                 </Button>
               </CardHeader>
               <CardContent>

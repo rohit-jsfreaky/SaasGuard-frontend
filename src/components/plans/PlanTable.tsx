@@ -157,7 +157,7 @@ export function PlanTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => navigate(`/plans/${plan.id}`)}
+                      onClick={() => navigate(`/dashboard/plans/${plan.id}`)}
                       title="View Details"
                     >
                       <Eye className="h-4 w-4" />
