@@ -76,13 +76,15 @@ function CodeBlock({
   const mappedLanguage = languageMap[language] || language;
 
   return (
-    <div className="group relative my-4 overflow-hidden rounded-lg border border-zinc-800 bg-[#1e1e1e]">
-      <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/50 px-4 py-2">
-        <span className="text-xs font-medium text-zinc-400">{language}</span>
+    <div className="group relative my-3 sm:my-4 rounded-lg border border-zinc-800 bg-[#1e1e1e] max-w-full">
+      <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/50 px-2 sm:px-4 py-1.5 sm:py-2">
+        <span className="text-[10px] sm:text-xs font-medium text-zinc-400">
+          {language}
+        </span>
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"
+          className="h-6 px-1.5 sm:px-2 text-[10px] sm:text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"
           onClick={handleCopy}
         >
           {copied ? (
@@ -90,27 +92,33 @@ function CodeBlock({
           ) : (
             <Copy className="mr-1 h-3 w-3" />
           )}
-          {copied ? "Copied!" : "Copy"}
+          <span className="hidden xs:inline">
+            {copied ? "Copied!" : "Copy"}
+          </span>
         </Button>
       </div>
-      <SyntaxHighlighter
-        language={mappedLanguage}
-        style={oneDark}
-        className="text-xs sm:text-sm"
-        customStyle={{
-          margin: 0,
-          padding: "1rem",
-          background: "transparent",
-          lineHeight: "1.5",
-        }}
-        codeTagProps={{
-          style: {
-            fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
-          },
-        }}
-      >
-        {code}
-      </SyntaxHighlighter>
+      <div className="overflow-x-auto">
+        <SyntaxHighlighter
+          language={mappedLanguage}
+          style={oneDark}
+          className="text-[10px] sm:text-xs md:text-sm !whitespace-pre"
+          customStyle={{
+            margin: 0,
+            padding: "0.75rem",
+            paddingRight: "1rem",
+            background: "transparent",
+            lineHeight: "1.5",
+            minWidth: "fit-content",
+          }}
+          codeTagProps={{
+            style: {
+              fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
+            },
+          }}
+        >
+          {code}
+        </SyntaxHighlighter>
+      </div>
     </div>
   );
 }
@@ -147,8 +155,13 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 py-8 border-b border-border/50">
-      <h2 className="mb-6 text-2xl font-bold tracking-tight">{title}</h2>
+    <section
+      id={id}
+      className="scroll-mt-20 sm:scroll-mt-24 py-6 sm:py-8 border-b border-border/50"
+    >
+      <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold tracking-tight">
+        {title}
+      </h2>
       {children}
     </section>
   );
@@ -165,20 +178,20 @@ function AlertBox({
   return (
     <div
       className={cn(
-        "my-4 rounded-lg border p-4",
+        "my-3 sm:my-4 rounded-lg border p-3 sm:p-4",
         type === "warning"
           ? "border-amber-500/20 bg-amber-500/10"
           : "border-blue-500/20 bg-blue-500/10"
       )}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2 sm:gap-3">
         <AlertTriangle
           className={cn(
-            "h-5 w-5 shrink-0 mt-0.5",
+            "h-4 w-4 sm:h-5 sm:w-5 shrink-0 mt-0.5",
             type === "warning" ? "text-amber-500" : "text-blue-500"
           )}
         />
-        <div className="text-sm">{children}</div>
+        <div className="text-xs sm:text-sm">{children}</div>
       </div>
     </div>
   );
@@ -239,7 +252,7 @@ export default function Docs() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-xl">
         <div className="flex h-14 items-center justify-between px-4 lg:px-8">
@@ -257,7 +270,11 @@ export default function Docs() {
               )}
             </Button>
             <Link to="/" className="flex items-center gap-2">
-              <img src="/saasguard_full.png" alt="SaaS Guard" className="h-16 w-auto" />
+              <img
+                src="/saasguard_full.png"
+                alt="SaaS Guard"
+                className="h-8 sm:h-10 w-auto"
+              />
             </Link>
             <span className="hidden text-sm text-muted-foreground sm:inline">
               / API Documentation
@@ -284,7 +301,7 @@ export default function Docs() {
         </div>
       </header>
 
-      <div className="flex">
+      <div className="flex overflow-hidden">
         {/* Sidebar */}
         <aside
           className={cn(
@@ -347,27 +364,27 @@ export default function Docs() {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 lg:pl-64">
-          <div className="mx-auto max-w-4xl px-4 py-8 lg:px-8">
+        <main className="flex-1 lg:pl-64 min-w-0 overflow-hidden">
+          <div className="mx-auto max-w-4xl px-3 sm:px-4 py-4 sm:py-8 lg:px-8 overflow-hidden">
             {/* Hero */}
-            <div className="mb-12 border-b pb-8">
-              <div className="mb-4 flex items-center gap-2">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            <div className="mb-8 sm:mb-12 border-b pb-6 sm:pb-8">
+              <div className="mb-3 sm:mb-4 flex items-center gap-2">
+                <span className="rounded-full bg-primary/10 px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium text-primary">
                   v1.0.0
                 </span>
               </div>
-              <h1 className="mb-4 text-4xl font-bold tracking-tight">
+              <h1 className="mb-3 sm:mb-4 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
                 SaaS Guard API Documentation
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
                 SaaS Guard is a centralized permission and entitlement engine
                 for SaaS applications. This documentation covers the APIs you
                 need to integrate SaaS Guard into your application.
               </p>
-              <div className="mt-6 rounded-lg border bg-muted/50 p-4">
-                <p className="text-sm">
+              <div className="mt-4 sm:mt-6 rounded-lg border bg-muted/50 p-3 sm:p-4">
+                <p className="text-xs sm:text-sm">
                   <span className="font-medium">Base URL:</span>{" "}
-                  <code className="rounded bg-background px-2 py-0.5 text-sm">
+                  <code className="rounded bg-background px-1.5 sm:px-2 py-0.5 text-xs sm:text-sm break-all">
                     https://your-api-domain.com/api
                   </code>
                 </p>
@@ -755,7 +772,9 @@ if (await checkPermission(userId, 'export_data')) {
   }
 }`}
                 />
-                <h4 className="mb-2 mt-6 text-sm font-semibold">cURL examples:</h4>
+                <h4 className="mb-2 mt-6 text-sm font-semibold">
+                  cURL examples:
+                </h4>
                 <CodeBlock
                   language="bash"
                   code={`# Assign Free plan
