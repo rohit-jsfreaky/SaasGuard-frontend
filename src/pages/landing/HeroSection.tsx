@@ -1,7 +1,6 @@
-import { useState, useEffect, lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowRight, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SplitText from "@/components/SplitText";
 import ShinyText from "@/components/ShinyText";
@@ -12,56 +11,11 @@ import {
   HERO_BULLETS,
 } from "./content";
 
-// Lazy load the 3D model to not block initial render
-const ShieldModel = lazy(() =>
-  import("./components/ShieldModel").then((m) => ({ default: m.ShieldModel }))
-);
-const ShieldModelFallback = lazy(() =>
-  import("./components/ShieldModel").then((m) => ({
-    default: m.ShieldModelFallback,
-  }))
-);
-
 interface HeroSectionProps {
   isSignedIn: boolean | undefined;
 }
 
 export function HeroSection({ isSignedIn }: HeroSectionProps) {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  // Check for mobile and reduced motion preference
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    const checkMotion = () =>
-      setPrefersReducedMotion(
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      );
-
-    checkMobile();
-    checkMotion();
-
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  // Track scroll progress for 3D model rotation
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const docHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const progress = Math.min(scrollY / docHeight, 1);
-      setScrollProgress(progress);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [prefersReducedMotion]);
-
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -175,37 +129,85 @@ export function HeroSection({ isSignedIn }: HeroSectionProps) {
             </motion.div>
           </div>
 
-          {/* Right side - 3D Shield Model */}
-          <div className="relative mt-16 lg:mt-0 lg:col-span-6 lg:h-150 flex items-center justify-center">
+          {/* Right side - Product snapshot */}
+          <div className="relative mt-16 lg:mt-0 lg:col-span-6 lg:h-full flex items-center justify-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="w-full h-full min-h-100 lg:min-h-150"
+              transition={{ duration: 0.7, delay: 0.25 }}
+              className="relative w-full max-w-2xl"
             >
-              <Suspense
-                fallback={
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                  </div>
-                }
-              >
-                {isMobile || prefersReducedMotion ? (
-                  <ShieldModelFallback className="w-full h-full" />
-                ) : (
-                  <ShieldModel
-                    scrollProgress={scrollProgress}
-                    className="w-full h-full"
-                  />
-                )}
-              </Suspense>
-            </motion.div>
+              <div className="absolute -inset-x-6 -inset-y-8 bg-linear-to-br from-primary/15 via-sky-500/10 to-purple-500/15 blur-3xl" />
 
-            {/* Decorative gradient blobs */}
-            <div className="absolute -z-10 inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl" />
-              <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
-            </div>
+              <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-background/70 backdrop-blur-xl shadow-2xl shadow-primary/15">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-border/50 bg-linear-to-r from-background/80 via-primary/5 to-background/80">
+                  <div className="flex items-center gap-3 text-sm font-semibold text-foreground">
+                    <ShieldCheck className="h-5 w-5 text-primary" />
+                    Product Snapshot
+                  </div>
+                  <span className="rounded-full bg-emerald-500/10 text-emerald-500 px-3 py-1 text-xs font-medium">
+                    In-app today
+                  </span>
+                </div>
+
+                <div className="grid gap-4 p-6 lg:grid-cols-5">
+                  <div className="lg:col-span-3 space-y-4">
+                    <div className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-inner">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>feature.access</span>
+                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-primary font-medium">
+                          org-scoped
+                        </span>
+                      </div>
+                      <div className="mt-3 space-y-2 font-mono text-sm">
+                        <div className="flex items-center justify-between rounded-lg bg-background/80 px-3 py-2">
+                          <span className="text-muted-foreground">features.table</span>
+                          <span className="text-emerald-500 font-semibold">uses orgId</span>
+                        </div>
+                        <div className="flex items-center justify-between rounded-lg bg-background/80 px-3 py-2">
+                          <span className="text-muted-foreground">permissions.fetch</span>
+                          <span className="text-emerald-500 font-semibold">plan + role</span>
+                        </div>
+                        <div className="flex items-center justify-between rounded-lg bg-background/80 px-3 py-2">
+                          <span className="text-muted-foreground">overrides.tab</span>
+                          <span className="text-amber-500 font-semibold">per user</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-border/60 bg-background/80 p-4 flex items-center gap-3 shadow-inner">
+                      <Sparkles className="h-5 w-5 text-primary" />
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-foreground">What’s built right now</p>
+                        <p className="text-sm text-muted-foreground">
+                          Clerk auth + protected routes, org switcher, plans & roles UI, overrides management, and permissions resolver.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-2 space-y-3">
+                    <div className="rounded-2xl border border-border/60 bg-linear-to-b from-primary/10 via-background to-background p-4 shadow-sm">
+                      <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">Auth & org</p>
+                      <p className="text-sm font-semibold text-foreground">Clerk sign-in + ProtectedRoute</p>
+                      <p className="text-sm text-muted-foreground">Organization switcher with delete flow.</p>
+                    </div>
+
+                    <div className="rounded-2xl border border-border/60 bg-background/80 p-4 shadow-sm">
+                      <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">Plans & roles</p>
+                      <p className="text-sm font-semibold text-foreground">Plan + role assignment UI</p>
+                      <p className="text-sm text-muted-foreground">Permissions API sends planId + orgId.</p>
+                    </div>
+
+                    <div className="rounded-2xl border border-border/60 bg-background/80 p-4 shadow-sm">
+                      <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">Overrides & usage</p>
+                      <p className="text-sm font-semibold text-foreground">Per-user overrides and usage limits view</p>
+                      <p className="text-sm text-muted-foreground">Feature table gated by organization selection.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
