@@ -57,25 +57,34 @@ export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
         >
           <CartesianGrid
             strokeDasharray="3 3"
+            stroke="#4b5563"
             horizontal={true}
             vertical={false}
           />
           <XAxis
             type="number"
             tickFormatter={(value) => value.toLocaleString()}
+            tick={{ fill: "#9ca3af", fontSize: 12 }}
+            axisLine={{ stroke: "#4b5563" }}
+            tickLine={{ stroke: "#4b5563" }}
           />
           <YAxis
             type="category"
             dataKey="name"
             width={80}
-            tick={{ fontSize: 12 }}
+            tick={{ fill: "#9ca3af", fontSize: 12 }}
+            axisLine={{ stroke: "#4b5563" }}
+            tickLine={{ stroke: "#4b5563" }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--popover))",
-              borderColor: "hsl(var(--border))",
+              backgroundColor: "#1f2937",
+              borderColor: "#374151",
               borderRadius: "8px",
+              color: "#f9fafb",
             }}
+            labelStyle={{ color: "#f9fafb" }}
+            itemStyle={{ color: "#f9fafb" }}
             formatter={(value: any) => [
               typeof value === "number" ? value.toLocaleString() : value,
               "Usage",
@@ -89,7 +98,7 @@ export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
           />
           <Bar
             dataKey="usage"
-            fill="hsl(var(--primary))"
+            fill="#3b82f6"
             radius={[0, 4, 4, 0]}
             name="usage"
           />

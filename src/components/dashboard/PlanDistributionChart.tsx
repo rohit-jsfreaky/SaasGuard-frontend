@@ -14,13 +14,15 @@ interface PlanDistributionChartProps {
   isLoading?: boolean;
 }
 
-// Fallback colors if CSS vars not available
+// Vibrant colors for chart segments
 const COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
+  "#3b82f6", // blue
+  "#22c55e", // green
+  "#f59e0b", // amber
+  "#a855f7", // purple
+  "#ef4444", // red
+  "#06b6d4", // cyan
+  "#ec4899", // pink
 ];
 
 export function PlanDistributionChart({
@@ -62,11 +64,13 @@ export function PlanDistributionChart({
             outerRadius={90}
             paddingAngle={2}
             dataKey="value"
-            label={({ name, percent }) =>
-              `${name}: ${((percent || 0) * 100).toFixed(0)}%`
-            }
+            label={{
+              fill: "#e5e7eb",
+              fontSize: 12,
+              formatter: (entry: any) => `${entry.name}: ${((entry.percent || 0) * 100).toFixed(0)}%`,
+            }}
             labelLine={{
-              stroke: "hsl(var(--muted-foreground))",
+              stroke: "#9ca3af",
               strokeWidth: 1,
             }}
           >
@@ -80,11 +84,13 @@ export function PlanDistributionChart({
           </Pie>
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--popover))",
-              borderColor: "hsl(var(--border))",
+              backgroundColor: "#1f2937",
+              borderColor: "#374151",
               borderRadius: "8px",
-              color: "hsl(var(--popover-foreground))",
+              color: "#f9fafb",
             }}
+            labelStyle={{ color: "#f9fafb" }}
+            itemStyle={{ color: "#f9fafb" }}
             formatter={(value: any) => [
               `${value} users (${((value / totalUsers) * 100).toFixed(1)}%)`,
               "Users",
