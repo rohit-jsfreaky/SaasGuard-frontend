@@ -149,28 +149,28 @@ export default function Dashboard() {
           label="Total Users"
           value={data?.metrics.totalUsers || 0}
           actionLabel="View Users"
-          onAction={() => navigate("/users")}
+          onAction={() => navigate("/dashboard/users")}
         />
         <MetricCard
           icon={<Package className="h-4 w-4" />}
           label="Total Plans"
           value={data?.metrics.totalPlans || 0}
           actionLabel="View Plans"
-          onAction={() => navigate("/plans")}
+          onAction={() => navigate("/dashboard/plans")}
         />
         <MetricCard
           icon={<Zap className="h-4 w-4" />}
           label="Active Features"
           value={data?.metrics.activeFeatures || 0}
           actionLabel="View Features"
-          onAction={() => navigate("/features")}
+          onAction={() => navigate("/dashboard/features")}
         />
         <MetricCard
           icon={<Shield className="h-4 w-4" />}
           label="Active Overrides"
           value={data?.metrics.activeOverrides || 0}
           actionLabel="View Overrides"
-          onAction={() => navigate("/overrides")}
+          onAction={() => navigate("/dashboard/overrides")}
         />
       </div>
 
