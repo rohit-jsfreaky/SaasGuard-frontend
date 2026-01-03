@@ -208,34 +208,31 @@ export function ApiKeyManagement({ organizationId }: ApiKeyManagementProps) {
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Key Prefix</TableHead>
-                    <TableHead>Scopes</TableHead>
-                    <TableHead>Last Used</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {apiKeys.map((key) => (
-                    <TableRow
-                      key={key.id}
-                      className={cn(!key.isActive && "opacity-60")}
-                    >
-                      <TableCell className="font-medium">{key.name}</TableCell>
-                      <TableCell>
+            <div>
+              {/* Mobile: Card layout */}
+              <div className="space-y-3 sm:hidden">
+                {apiKeys.map((key) => (
+                  <div
+                    key={key.id}
+                    className={cn(
+                      "p-3 rounded-lg border bg-card",
+                      !key.isActive && "opacity-60"
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <code className="rounded bg-muted px-2 py-1 text-xs font-mono">
+                          <p className="text-sm font-medium">{key.name}</p>
+                          {getStatusBadge(key)}
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">
                             {key.keyPrefix}...
                           </code>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 w-6 p-0"
+                            className="h-5 w-5 p-0"
                             onClick={() =>
                               handleCopyPrefix(key.keyPrefix, key.id)
                             }
@@ -247,77 +244,165 @@ export function ApiKeyManagement({ organizationId }: ApiKeyManagementProps) {
                             )}
                           </Button>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <TooltipProvider>
-                          <div className="flex flex-wrap gap-1">
-                            {(key.scopes || []).slice(0, 2).map((scope) => (
-                              <Tooltip key={scope}>
-                                <TooltipTrigger>
-                                  <Badge
-                                    variant="outline"
-                                    className="text-xs font-normal"
-                                  >
-                                    {scope.split(":")[0]}
-                                  </Badge>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{scope}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            ))}
-                            {(key.scopes || []).length > 2 && (
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Badge
-                                    variant="outline"
-                                    className="text-xs font-normal"
-                                  >
-                                    +{key.scopes.length - 2}
-                                  </Badge>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{key.scopes.slice(2).join(", ")}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </div>
-                        </TooltipProvider>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {key.lastUsedAt
-                          ? formatDistanceToNow(new Date(key.lastUsedAt), {
-                              addSuffix: true,
-                            })
-                          : "Never"}
-                      </TableCell>
-                      <TableCell>{getStatusBadge(key)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
-                          {key.isActive && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-amber-500 hover:text-amber-600 hover:bg-amber-500/10"
-                              onClick={() => setRevokeKey(key)}
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {(key.scopes || []).slice(0, 2).map((scope) => (
+                            <Badge
+                              key={scope}
+                              variant="outline"
+                              className="text-xs font-normal"
                             >
-                              <Ban className="h-4 w-4" />
-                            </Button>
+                              {scope.split(":")[0]}
+                            </Badge>
+                          ))}
+                          {(key.scopes || []).length > 2 && (
+                            <Badge
+                              variant="outline"
+                              className="text-xs font-normal"
+                            >
+                              +{key.scopes.length - 2}
+                            </Badge>
                           )}
+                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        {key.isActive && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                            onClick={() => setDeleteKeyConfirm(key)}
+                            className="h-8 w-8 p-0 text-amber-500"
+                            onClick={() => setRevokeKey(key)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Ban className="h-4 w-4" />
                           </Button>
-                        </div>
-                      </TableCell>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-destructive"
+                          onClick={() => setDeleteKeyConfirm(key)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop: Table layout */}
+              <div className="hidden sm:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Key Prefix</TableHead>
+                      <TableHead>Scopes</TableHead>
+                      <TableHead>Last Used</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {apiKeys.map((key) => (
+                      <TableRow
+                        key={key.id}
+                        className={cn(!key.isActive && "opacity-60")}
+                      >
+                        <TableCell className="font-medium">
+                          {key.name}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <code className="rounded bg-muted px-2 py-1 text-xs font-mono">
+                              {key.keyPrefix}...
+                            </code>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={() =>
+                                handleCopyPrefix(key.keyPrefix, key.id)
+                              }
+                            >
+                              {copiedKeyId === key.id ? (
+                                <Check className="h-3 w-3 text-emerald-500" />
+                              ) : (
+                                <Copy className="h-3 w-3" />
+                              )}
+                            </Button>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <TooltipProvider>
+                            <div className="flex flex-wrap gap-1">
+                              {(key.scopes || []).slice(0, 2).map((scope) => (
+                                <Tooltip key={scope}>
+                                  <TooltipTrigger>
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs font-normal"
+                                    >
+                                      {scope.split(":")[0]}
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{scope}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              ))}
+                              {(key.scopes || []).length > 2 && (
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs font-normal"
+                                    >
+                                      +{key.scopes.length - 2}
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{key.scopes.slice(2).join(", ")}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                            </div>
+                          </TooltipProvider>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {key.lastUsedAt
+                            ? formatDistanceToNow(new Date(key.lastUsedAt), {
+                                addSuffix: true,
+                              })
+                            : "Never"}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(key)}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1">
+                            {key.isActive && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-amber-500 hover:text-amber-600 hover:bg-amber-500/10"
+                                onClick={() => setRevokeKey(key)}
+                              >
+                                <Ban className="h-4 w-4" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => setDeleteKeyConfirm(key)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           )}
         </CardContent>

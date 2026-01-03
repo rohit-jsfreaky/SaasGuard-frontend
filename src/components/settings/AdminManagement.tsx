@@ -131,65 +131,128 @@ export function AdminManagement({
               No admins found
             </p>
           ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Added</TableHead>
-                    <TableHead className="w-[80px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {admins.map((admin) => (
-                    <TableRow key={admin.id}>
-                      <TableCell className="font-medium">
-                        {admin.email}
+            <div>
+              {/* Mobile: Card layout */}
+              <div className="space-y-3 sm:hidden">
+                {admins.map((admin) => (
+                  <div
+                    key={admin.id}
+                    className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium truncate">
+                          {admin.email}
+                        </p>
                         {admin.id === currentUserId && (
-                          <span className="ml-2 text-xs text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             (you)
                           </span>
                         )}
-                      </TableCell>
-                      <TableCell>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
                         {admin.isCreator ? (
-                          <Badge variant="default" className="gap-1">
+                          <Badge variant="default" className="gap-1 text-xs">
                             <Crown className="h-3 w-3" />
                             Owner
                           </Badge>
                         ) : (
-                          <Badge variant="secondary">Admin</Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            Admin
+                          </Badge>
                         )}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {formatDate(admin.createdAt)}
-                      </TableCell>
-                      <TableCell>
-                        {!admin.isCreator && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Actions</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
-                                onClick={() => setRemoveAdminUser(admin)}
-                              >
-                                <ShieldOff className="mr-2 h-4 w-4" />
-                                Remove Admin
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
-                      </TableCell>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDate(admin.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                    {!admin.isCreator && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={() => setRemoveAdminUser(admin)}
+                          >
+                            <ShieldOff className="mr-2 h-4 w-4" />
+                            Remove Admin
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop: Table layout */}
+              <div className="hidden sm:block rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Added</TableHead>
+                      <TableHead className="w-[80px]">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {admins.map((admin) => (
+                      <TableRow key={admin.id}>
+                        <TableCell className="font-medium">
+                          {admin.email}
+                          {admin.id === currentUserId && (
+                            <span className="ml-2 text-xs text-muted-foreground">
+                              (you)
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {admin.isCreator ? (
+                            <Badge variant="default" className="gap-1">
+                              <Crown className="h-3 w-3" />
+                              Owner
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">Admin</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatDate(admin.createdAt)}
+                        </TableCell>
+                        <TableCell>
+                          {!admin.isCreator && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Actions</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive"
+                                  onClick={() => setRemoveAdminUser(admin)}
+                                >
+                                  <ShieldOff className="mr-2 h-4 w-4" />
+                                  Remove Admin
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           )}
         </CardContent>
