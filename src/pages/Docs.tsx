@@ -35,6 +35,8 @@ const docsNav = [
       { id: "get-user-permissions", title: "Get User Permissions" },
       { id: "record-usage", title: "Record Usage" },
       { id: "sync-users", title: "Sync Users" },
+      { id: "assign-plan", title: "Assign Plan" },
+      { id: "assign-role", title: "Assign Role" },
       { id: "get-usage", title: "Get Usage" },
     ],
   },
@@ -718,6 +720,101 @@ if (await checkPermission(userId, 'export_data')) {
                 </ul>
               </div>
 
+              {/* Assign Plan */}
+              <div id="assign-plan" className="scroll-mt-24 mb-10">
+                <h3 className="mb-4 text-xl font-semibold">Assign Plan</h3>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Attach a plan to a user after purchase or upgrade.
+                </p>
+                <div className="mb-4 flex items-center gap-2 rounded-lg border bg-muted/50 p-3">
+                  <MethodBadge method="POST" />
+                  <code className="text-sm">/api/v1/users/plan</code>
+                </div>
+                <h4 className="mb-2 text-sm font-semibold">Request Body:</h4>
+                <CodeBlock
+                  language="json"
+                  code={`{
+  "clerkId": "user_pro_001",
+  "planSlug": "pro-plan"
+}`}
+                />
+                <h4 className="mb-2 mt-6 text-sm font-semibold">Response:</h4>
+                <CodeBlock
+                  language="json"
+                  code={`{
+  "success": true,
+  "data": {
+    "userId": 11,
+    "planId": 4,
+    "plan": {
+      "id": 4,
+      "name": "Pro Plan",
+      "slug": "pro-plan"
+    },
+    "assignedAt": "2026-01-03T15:35:00.000Z"
+  }
+}`}
+                />
+                <h4 className="mb-2 mt-6 text-sm font-semibold">cURL examples:</h4>
+                <CodeBlock
+                  language="bash"
+                  code={`# Assign Free plan
+curl -X POST http://localhost:3000/api/v1/users/plan \
+  -H "X-API-Key: sg_abc123xyz789..." \
+  -H "Content-Type: application/json" \
+  -d '{"clerkId": "user_free_001", "planSlug": "free-plan"}'
+
+# Assign Pro plan
+curl -X POST http://localhost:3000/api/v1/users/plan \
+  -H "X-API-Key: sg_abc123xyz789..." \
+  -H "Content-Type: application/json" \
+  -d '{"clerkId": "user_pro_001", "planSlug": "pro-plan"}'
+
+# Assign Enterprise plan
+curl -X POST http://localhost:3000/api/v1/users/plan \
+  -H "X-API-Key: sg_abc123xyz789..." \
+  -H "Content-Type: application/json" \
+  -d '{"clerkId": "user_enterprise_001", "planSlug": "elite-plan"}'`}
+                />
+              </div>
+
+              {/* Assign Role */}
+              <div id="assign-role" className="scroll-mt-24 mb-10">
+                <h3 className="mb-4 text-xl font-semibold">Assign Role</h3>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Grant a specific role (e.g., admin, editor) to a user.
+                </p>
+                <div className="mb-4 flex items-center gap-2 rounded-lg border bg-muted/50 p-3">
+                  <MethodBadge method="POST" />
+                  <code className="text-sm">/api/v1/users/role</code>
+                </div>
+                <h4 className="mb-2 text-sm font-semibold">Request Body:</h4>
+                <CodeBlock
+                  language="json"
+                  code={`{
+  "clerkId": "user_pro_001",
+  "roleSlug": "editor"
+}`}
+                />
+                <h4 className="mb-2 mt-6 text-sm font-semibold">Response:</h4>
+                <CodeBlock
+                  language="json"
+                  code={`{
+  "success": true,
+  "data": {
+    "userId": 11,
+    "roleId": 3,
+    "role": {
+      "id": 3,
+      "name": "Editor",
+      "slug": "editor"
+    },
+    "assignedAt": "2026-01-03T15:36:00.000Z"
+  }
+}`}
+                />
+              </div>
+
               {/* Get Usage */}
               <div id="get-usage" className="scroll-mt-24 mb-10">
                 <h3 className="mb-4 text-xl font-semibold">Get Usage</h3>
@@ -1094,10 +1191,10 @@ async function getPermissions(userId) {
               <p>
                 Need help? Contact{" "}
                 <a
-                  href="mailto:support@saasguard.io"
+                  href="mailto:rohitkashyapmrt@gmail.com"
                   className="text-primary hover:underline"
                 >
-                  support@saasguard.io
+                  rohitkashyapmrt@gmail.com
                 </a>
               </p>
             </div>
