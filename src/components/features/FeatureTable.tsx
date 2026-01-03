@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, AlertTriangle, RefreshCw } from "lucide-react";
 import type { Feature } from "@/types/entities";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -22,6 +22,7 @@ import {
 interface FeatureTableProps {
   features: Feature[];
   isLoading: boolean;
+  error?: string | null;
   onEdit: (feature: Feature) => void;
   onDelete: (feature: Feature) => void;
   page: number;
@@ -32,12 +33,43 @@ interface FeatureTableProps {
 export function FeatureTable({
   features,
   isLoading,
+  error,
   onEdit,
   onDelete,
   page,
   totalPages,
   onPageChange,
 }: FeatureTableProps) {
+  if (error) {
+    const normalized = error.toLowerCase();
+    console.log("Normalized error:", normalized);
+    const isOrgContext = normalized.includes("organization context required");
+
+    const title = isOrgContext ? "Organization required" : "Unable to load features";
+    const message = isOrgContext
+      ? "Select or create an organization using the Select Org control in the header."
+      : error;
+
+    return (
+      <div className="flex min-h-[320px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in-50">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent/40">
+          <AlertTriangle className="h-6 w-6 text-amber-600" />
+        </div>
+        <h3 className="mt-4 text-lg font-semibold">{title}</h3>
+        <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-md">{message}</p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => window.location.reload()}
+          >
+            <RefreshCw className="h-4 w-4" /> Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="space-y-4">

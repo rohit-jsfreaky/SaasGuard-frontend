@@ -42,7 +42,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link to="/settings">
+            <Link to="/dashboard/settings">
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </Link>

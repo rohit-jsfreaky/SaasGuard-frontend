@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Plus, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FeatureTable } from "@/components/features/FeatureTable";
@@ -14,6 +14,8 @@ export default function Features() {
   const {
     features,
     isLoading,
+    error,
+    currentOrganization,
     page,
     totalPages,
     setPage,
@@ -52,15 +54,30 @@ export default function Features() {
         />
       </div>
 
-      <FeatureTable
-        features={features}
-        isLoading={isLoading}
-        onEdit={(feature) => openModal("edit", feature)}
-        onDelete={(feature) => openModal("delete", feature)}
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-      />
+      {!currentOrganization && (
+        <div className="flex min-h-[240px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent/40">
+            <Building2 className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <h3 className="mt-4 text-lg font-semibold">Select or create an organization</h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-md">
+            Use the "Select Org" control in the header to choose an existing organization or create a new one before managing features.
+          </p>
+        </div>
+      )}
+
+      {currentOrganization && (
+        <FeatureTable
+          features={features}
+          isLoading={isLoading}
+          error={error}
+          onEdit={(feature) => openModal("edit", feature)}
+          onDelete={(feature) => openModal("delete", feature)}
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      )}
 
       <CreateFeatureModal />
       <EditFeatureModal />

@@ -41,10 +41,10 @@ export function AssignRoleModal({
   const availableRoles = roles.filter((r) => !assignedRoleIds.includes(r.id));
 
   useEffect(() => {
-    if (isOpen) {
-      setSelectedRoleId("");
-    }
-  }, [isOpen]);
+    if (!isOpen) return;
+    const firstAvailable = availableRoles[0]?.id;
+    setSelectedRoleId(firstAvailable ? String(firstAvailable) : "");
+  }, [isOpen, availableRoles]);
 
   const selectedRole = roles.find((r) => r.id === Number(selectedRoleId));
 

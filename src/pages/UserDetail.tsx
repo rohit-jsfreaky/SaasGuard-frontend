@@ -247,7 +247,7 @@ export default function UserDetail() {
                 </div>
                 <Button size="sm" onClick={() => setIsAssignRoleOpen(true)}>
                   <Plus className="mr-2 h-4 w-4" />
-                  Assign Role
+                  {roles.length > 0 ? "Change Role" : "Assign Role"}
                 </Button>
               </CardHeader>
               <CardContent>
