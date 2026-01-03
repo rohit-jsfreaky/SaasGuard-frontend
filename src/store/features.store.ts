@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { featuresService } from "@/services/features.service";
 import type { Feature } from "@/types/entities";
 import { toast } from "sonner";
+import { useOrganizationStore } from "@/store/organization.store";
 
 interface FeaturesState {
   features: Feature[];
@@ -33,13 +34,20 @@ export const useFeaturesStore = create<FeaturesState>((set, get) => ({
   fetchFeatures: async () => {
     const { page, search, isLoading } = get();
 
+    const orgId = useOrganizationStore.getState().getCurrentOrgId();
+
+    if (!orgId) {
+      set({ error: "Select or create an organization to view features." });
+      return;
+    }
+
     // Prevent duplicate fetches
     if (isLoading) return;
 
     set({ isLoading: true, error: null });
 
     try {
-      const response = await featuresService.getAll(page, 10, search);
+      const response = await featuresService.getAll(page, 10, search, orgId);
       const pagination = response.pagination;
 
       set({
@@ -51,11 +59,13 @@ export const useFeaturesStore = create<FeaturesState>((set, get) => ({
         isLoading: false,
       });
     } catch (err: any) {
+      const apiMessage = err?.response?.data?.error?.message;
+      const message = apiMessage || err.message || "Failed to fetch features";
       set({
-        error: err.message || "Failed to fetch features",
+        error: message,
         isLoading: false,
       });
-      toast.error("Failed to fetch features");
+      toast.error(message);
     }
   },
 
