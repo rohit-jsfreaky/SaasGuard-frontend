@@ -10,4 +10,7 @@ export const organizationsService = {
 
   // Create a new organization
   create: (name: string) => api.post<Organization>("/organizations", { name }),
+
+  // Delete an organization
+  delete: (id: number) => api.delete<{ success: boolean; message: string }>(`/organizations/${id}`),
 };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Building2, Check, ChevronDown, Plus } from "lucide-react";
+import { Building2, Check, ChevronDown, Plus, Trash2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -31,12 +31,15 @@ export function OrganizationSwitcher() {
     fetchOrganizations,
     setCurrentOrganization,
     createOrganization,
+    deleteOrganization,
   } = useOrganizationStore();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newOrgName, setNewOrgName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!hasFetched && !isLoading) {
@@ -118,6 +121,16 @@ export function OrganizationSwitcher() {
             <Plus className="mr-2 h-4 w-4" />
             Create Organization
           </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive cursor-pointer"
+            onClick={() => setIsDeleteOpen(true)}
+            disabled={!currentOrganization}
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete Organization
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -158,6 +171,45 @@ export function OrganizationSwitcher() {
             </Button>
             <Button onClick={handleCreate} disabled={isCreating}>
               {isCreating ? "Creating..." : "Create"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <DialogContent className="sm:max-w-[460px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+              Delete organization
+            </DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. You must be an admin and the
+              organization must have no users.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p>Organization: {currentOrganization?.name || ""}</p>
+            <p className="text-destructive">This will remove all related data.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (!currentOrganization) return;
+                setIsDeleting(true);
+                const success = await deleteOrganization(currentOrganization.id);
+                setIsDeleting(false);
+                if (success) {
+                  setIsDeleteOpen(false);
+                }
+              }}
+              disabled={!currentOrganization || isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>

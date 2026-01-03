@@ -18,6 +18,7 @@ interface OrganizationState {
   setCurrentOrganization: (org: Organization) => void;
   createOrganization: (name: string) => Promise<boolean>;
   getCurrentOrgId: () => number | null;
+  deleteOrganization: (id: number) => Promise<boolean>;
 }
 
 export const useOrganizationStore = create<OrganizationState>()(
@@ -93,6 +94,42 @@ export const useOrganizationStore = create<OrganizationState>()(
           return true;
         } catch (err: any) {
           toast.error(err.message || "Failed to create organization");
+          return false;
+        }
+      },
+
+      deleteOrganization: async (id: number) => {
+        const { organizations, currentOrganization } = get();
+
+        try {
+          const response = await organizationsService.delete(id);
+
+          const remainingOrgs = organizations.filter((org) => org.id !== id);
+          const nextOrg =
+            currentOrganization?.id === id
+              ? remainingOrgs[0] ?? null
+              : currentOrganization;
+
+          set({
+            organizations: remainingOrgs,
+            currentOrganization: nextOrg,
+          });
+
+          if (nextOrg) {
+            localStorage.setItem(STORAGE_KEY, String(nextOrg.id));
+          } else {
+            localStorage.removeItem(STORAGE_KEY);
+          }
+
+          toast.success(response.data?.message || "Organization deleted successfully");
+          if (currentOrganization?.id === id) {
+            window.location.reload();
+          }
+
+          return true;
+        } catch (err: any) {
+          const apiMessage = err?.response?.data?.error?.message;
+          toast.error(apiMessage || err.message || "Failed to delete organization");
           return false;
         }
       },
