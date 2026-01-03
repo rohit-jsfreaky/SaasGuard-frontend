@@ -1,16 +1,67 @@
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { HERO_BULLETS, HERO_CODE_SNIPPET } from "./content";
+import SplitText from "@/components/SplitText";
+import ShinyText from "@/components/ShinyText";
+import {
+  HERO_HEADLINE,
+  HERO_HEADLINE_ACCENT,
+  HERO_DESCRIPTION,
+  HERO_BULLETS,
+} from "./content";
+
+// Lazy load the 3D model to not block initial render
+const ShieldModel = lazy(() =>
+  import("./components/ShieldModel").then((m) => ({ default: m.ShieldModel }))
+);
+const ShieldModelFallback = lazy(() =>
+  import("./components/ShieldModel").then((m) => ({
+    default: m.ShieldModelFallback,
+  }))
+);
 
 interface HeroSectionProps {
   isSignedIn: boolean | undefined;
 }
 
 export function HeroSection({ isSignedIn }: HeroSectionProps) {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Check for mobile and reduced motion preference
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    const checkMotion = () =>
+      setPrefersReducedMotion(
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+
+    checkMobile();
+    checkMotion();
+
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Track scroll progress for 3D model rotation
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = Math.min(scrollY / docHeight, 1);
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [prefersReducedMotion]);
+
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -26,69 +77,90 @@ export function HeroSection({ isSignedIn }: HeroSectionProps) {
   };
 
   return (
-    <section className="relative px-4 pt-20 sm:pt-4 pb-14 overflow-hidden">
-      <div className="mx-auto max-w-7xl">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-x-16 lg:gap-y-16 items-center">
-          <div className="relative z-10 mx-auto max-w-2xl lg:col-span-5 lg:max-w-none lg:pt-4 flex flex-col justify-center">
+    <section className="relative px-4 pt-24 sm:pt-32 pb-16 lg:pb-24 overflow-hidden min-h-[90vh] flex items-center">
+      <div className="mx-auto max-w-7xl w-full">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-x-12 items-center">
+          {/* Left content */}
+          <div className="relative z-10 mx-auto max-w-2xl lg:col-span-6 lg:max-w-none">
             <motion.div
               initial="initial"
               animate="animate"
               variants={staggerContainer}
               className="space-y-6 sm:space-y-8"
             >
+              {/* Badge */}
               <motion.div
                 variants={fadeIn}
-                className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-sm font-medium text-primary backdrop-blur-sm"
+                className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm"
               >
-                <span className="mr-2 flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                v2.0 is now live
+                <span className="mr-2 flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+                API-First Permission Engine
               </motion.div>
 
-              <motion.h1
-                variants={fadeIn}
-                className="text-2xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl max-w-xl leading-tight"
-              >
-                Secure your SaaS
-                <br className="hidden sm:block" />
-                infrastructure with{" "}
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-600 dark:to-blue-400">
-                  confidence
-                </span>
-              </motion.h1>
+              {/* Headlines */}
+              <motion.div variants={fadeIn} className="space-y-1">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-foreground leading-tight">
+                  <SplitText
+                    text={HERO_HEADLINE}
+                    className="inline-block"
+                    delay={50}
+                    from={{
+                      opacity: 0,
+                      y: 20,
+                    }}
+                    to={{ opacity: 1, y: 0 }}
+                    ease="power3.out"
+                    threshold={0.1}
+                    textAlign="left"
+                  />
+                </h1>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
+                  <ShinyText
+                    text={HERO_HEADLINE_ACCENT}
+                    disabled={false}
+                    speed={3}
+                    className="text-transparent bg-clip-text bg-linear-to-r from-blue-500 via-purple-500 to-blue-500"
+                  />
+                </h1>
+              </motion.div>
 
+              {/* Description */}
               <motion.p
                 variants={fadeIn}
-                className="text-xs sm:text-base leading-6 sm:leading-7 text-muted-foreground max-w-xl"
+                className="text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed"
               >
-                API-first access control with real-time decisions,
-                policy-as-code, and audit-ready trails. Drop it between your
-                auth provider and application logic.
+                {HERO_DESCRIPTION}
               </motion.p>
 
-              <motion.ul
-                variants={fadeIn}
-                className="grid grid-cols-1 gap-3 text-sm text-muted-foreground"
-              >
-                {HERO_BULLETS.map((item) => (
-                  <li
+              {/* Bullet points */}
+              <motion.ul variants={fadeIn} className="space-y-3">
+                {HERO_BULLETS.map((item, index) => (
+                  <motion.li
                     key={item}
-                    className="flex items-start gap-2 rounded-lg border border-border/50 bg-background/80 px-3 py-2"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    className="flex items-start gap-3 text-sm sm:text-base text-muted-foreground"
                   >
-                    <CheckCircle2 className="h-4 w-4 text-primary mt-0.5" />
-                    <span className="leading-6 text-foreground">{item}</span>
-                  </li>
+                    <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                    <span>{item}</span>
+                  </motion.li>
                 ))}
               </motion.ul>
 
-              <motion.div variants={fadeIn} className="flex flex-wrap gap-4">
+              {/* CTAs */}
+              <motion.div
+                variants={fadeIn}
+                className="flex flex-col sm:flex-row gap-4 pt-4"
+              >
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 px-8 text-base shadow-xl shadow-primary/20"
+                  className="h-12 px-8 text-base shadow-xl shadow-primary/20 group"
                 >
                   <Link to={isSignedIn ? "/dashboard" : "/login"}>
-                    {isSignedIn ? "Open Dashboard" : "Sign in to build"}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    {isSignedIn ? "Open Dashboard" : "Get Started Free"}
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
                 <Button
@@ -97,75 +169,50 @@ export function HeroSection({ isSignedIn }: HeroSectionProps) {
                   size="lg"
                   className="h-12 px-8 text-base bg-background/50 backdrop-blur-sm"
                 >
-                  <Link to="/docs">View API docs</Link>
+                  <Link to="/docs">View API Docs</Link>
                 </Button>
               </motion.div>
             </motion.div>
           </div>
 
-          {/* Hero Code Sample */}
-          <div className="relative mt-12 lg:mt-0 lg:col-span-7 lg:h-full flex items-center justify-center lg:justify-end">
+          {/* Right side - 3D Shield Model */}
+          <div className="relative mt-16 lg:mt-0 lg:col-span-6 lg:h-150 flex items-center justify-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="w-full max-w-160"
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="w-full h-full min-h-100 lg:min-h-150"
             >
-              <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-background/80 backdrop-blur-xl shadow-2xl">
-                <div className="flex items-center justify-between border-b border-border/50 px-4 py-3">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                    API policy decision
+              <Suspense
+                fallback={
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    Deterministic
-                  </span>
-                </div>
-                <div className="p-4">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground mb-3">
-                    Example request/response
-                  </p>
-                  <div className="overflow-hidden rounded-xl border border-border/50 bg-muted/20">
-                    <SyntaxHighlighter
-                      language="http"
-                      style={oneDark}
-                      wrapLongLines
-                      className="text-[11px] sm:text-xs"
-                      customStyle={{
-                        margin: 0,
-                        padding: "1rem",
-                        background: "transparent",
-                        lineHeight: "1.6",
-                      }}
-                      codeTagProps={{
-                        style: {
-                          fontFamily:
-                            "'Fira Code', 'JetBrains Mono', Consolas, monospace",
-                        },
-                      }}
-                    >
-                      {HERO_CODE_SNIPPET}
-                    </SyntaxHighlighter>
-                  </div>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm text-foreground">
-                    <div className="rounded-lg border border-border/50 bg-background/60 p-3">
-                      <p className="font-semibold">Policy-as-code</p>
-                      <p className="text-muted-foreground text-xs mt-1">
-                        YAML/JSON policies synced via Git or API.
-                      </p>
-                    </div>
-                    <div className="rounded-lg border border-border/50 bg-background/60 p-3">
-                      <p className="font-semibold">HTTP everywhere</p>
-                      <p className="text-muted-foreground text-xs mt-1">
-                        Call from edge, backend, or workers via HTTPS.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                }
+              >
+                {isMobile || prefersReducedMotion ? (
+                  <ShieldModelFallback className="w-full h-full" />
+                ) : (
+                  <ShieldModel
+                    scrollProgress={scrollProgress}
+                    className="w-full h-full"
+                  />
+                )}
+              </Suspense>
             </motion.div>
+
+            {/* Decorative gradient blobs */}
+            <div className="absolute -z-10 inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl" />
+              <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* Background gradient */}
+      <div className="absolute inset-0 -z-20 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200%] h-125 bg-linear-to-b from-primary/5 via-primary/2 to-transparent" />
       </div>
     </section>
   );

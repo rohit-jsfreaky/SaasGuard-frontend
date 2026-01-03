@@ -22,6 +22,8 @@ const Settings = lazy(() => import("@/pages/Settings"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const Docs = lazy(() => import("@/pages/Docs"));
+const Login = lazy(() => import("@/pages/Login"));
+const Signup = lazy(() => import("@/pages/Signup"));
 
 // Loading fallback for lazy loaded pages
 function PageLoader() {
@@ -52,6 +54,22 @@ function App() {
                 element={
                   <Suspense fallback={<PageLoader />}>
                     <Docs />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/login/*"
+                element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Login />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/signup/*"
+                element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Signup />
                   </Suspense>
                 }
               />

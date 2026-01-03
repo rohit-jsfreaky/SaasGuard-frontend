@@ -1,9 +1,10 @@
 import { useAuth } from "@/hooks/useAuth";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { RedirectToSignIn } from "@clerk/clerk-react";
+import { Navigate, useLocation } from "react-router-dom";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isSignedIn, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -14,7 +15,8 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!isSignedIn) {
-    return <RedirectToSignIn />;
+    // Redirect to login page, preserving the intended destination
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
