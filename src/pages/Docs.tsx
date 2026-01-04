@@ -57,6 +57,9 @@ const languageMap: Record<string, string> = {
   shell: "bash",
 };
 
+const docsBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+const exampleBaseUrl = docsBaseUrl || "https://your-api-domain.com/api";
+
 // Code block component with syntax highlighting and copy functionality
 function CodeBlock({
   code,
@@ -385,7 +388,7 @@ export default function Docs() {
                 <p className="text-xs sm:text-sm">
                   <span className="font-medium">Base URL:</span>{" "}
                   <code className="rounded bg-background px-1.5 sm:px-2 py-0.5 text-xs sm:text-sm break-all">
-                    https://your-api-domain.com/api
+                    {exampleBaseUrl}
                   </code>
                 </p>
               </div>
@@ -420,7 +423,7 @@ export default function Docs() {
               <CodeBlock
                 language="javascript"
                 code={`const response = await fetch(
-  'https://your-api-domain.com/api/v1/permissions?userId=123',
+  '${exampleBaseUrl}/v1/permissions?userId=123',
   {
     headers: {
       'X-API-Key': 'sg_your_api_key_here'
@@ -444,7 +447,7 @@ if (data.limits['api_calls'].remaining > 0) {
               </h3>
               <CodeBlock
                 language="javascript"
-                code={`await fetch('https://your-api-domain.com/api/v1/usage/record', {
+                code={`await fetch('${exampleBaseUrl}/v1/usage/record', {
   method: 'POST',
   headers: {
     'X-API-Key': 'sg_your_api_key_here',
@@ -606,7 +609,7 @@ GET /api/v1/permissions?userId=123&apiKey=sg_1a2b3c4d5e6f7g8h9i0j...`}
                   language="javascript"
                   code={`async function checkPermission(userId, feature) {
   const res = await fetch(
-    \`https://api.saasguard.io/api/v1/permissions?userId=\${userId}\`,
+    \`${exampleBaseUrl}/v1/permissions?userId=\${userId}\`,
     { headers: { 'X-API-Key': process.env.SAASGUARD_API_KEY } }
   );
   const { data } = await res.json();
@@ -677,7 +680,7 @@ if (await checkPermission(userId, 'export_data')) {
   const post = await db.posts.create(data);
   
   // 2. Then record usage
-  await fetch('https://api.saasguard.io/api/v1/usage/record', {
+  await fetch('${exampleBaseUrl}/v1/usage/record', {
     method: 'POST',
     headers: {
       'X-API-Key': process.env.SAASGUARD_API_KEY,
