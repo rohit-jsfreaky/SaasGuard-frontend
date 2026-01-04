@@ -296,7 +296,7 @@ export const FOOTER_LINKS: FooterLinkGroup[] = [
     title: "Company",
     links: [
       { name: "Contact", href: "mailto:rohitkashyapmrt@gmail.com" },
-      { name: "GitHub", href: "https://github.com" },
+      { name: "GitHub", href: "https://github.com/rohit-jsfreaky/SaasGuard-frontend" },
     ],
   },
 ];

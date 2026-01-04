@@ -1,73 +1,135 @@
-# React + TypeScript + Vite
+# SaaS Guard Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React dashboard for managing feature flags, plans, roles, and usage-based permissions for SaaS applications.
 
-Currently, two official plugins are available:
+![SaaS Guard](public/saasguard_full.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Feature Management** – Create, edit, and organize feature flags with boolean or limit-based types
+- **Plans** – Define subscription plans with feature entitlements and usage limits
+- **Roles** – Configure roles with granular permissions for organization members
+- **User Management** – View users, assign plans/roles, and manage overrides
+- **Overrides** – Grant or revoke specific features per user with optional expiration
+- **Usage Tracking** – Monitor feature usage across your organization
+- **API Key Management** – Generate and revoke API keys for external integrations
+- **Organization Switcher** – Multi-tenant support with easy org switching
+- **Dark/Light Mode** – Full theme support
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **React 19** + **TypeScript**
+- **Vite** – Fast dev server and build
+- **Tailwind CSS v4** – Utility-first styling
+- **shadcn/ui** – Accessible component primitives (Radix UI)
+- **Clerk** – Authentication and user management
+- **Zustand** – Lightweight state management
+- **React Router v7** – Client-side routing
+- **Recharts** – Dashboard charts
+- **Axios** – API client
+- **Motion** – Animations
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js 18+
+- A running SaaS Guard backend API
+- Clerk account for authentication
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/saasguard-frontend.git
+cd saasguard-frontend
+
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.example .env.local
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env.local` file:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_API_URL=http://localhost:3000/api
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
 ```
+
+### Development
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173)
+
+### Build
+
+```bash
+npm run build
+npm run preview
+```
+
+### Linting & Type Check
+
+```bash
+npm run lint
+npm run type-check
+```
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── auth/          # Auth provider, protected routes
+│   ├── common/        # Layout, Header, Sidebar, Breadcrumbs
+│   ├── dashboard/     # Dashboard charts and metrics
+│   ├── features/      # Feature CRUD modals and table
+│   ├── overrides/     # Override management
+│   ├── plans/         # Plan CRUD and feature assignment
+│   ├── roles/         # Role management
+│   ├── settings/      # API keys, org settings
+│   ├── ui/            # shadcn/ui components
+│   ├── usage/         # Usage charts and tables
+│   └── users/         # User detail, plan/role assignment
+├── hooks/             # Custom hooks (useAuth, useTheme, etc.)
+├── pages/             # Route page components
+├── services/          # API service modules
+├── store/             # Zustand stores
+├── styles/            # Global CSS and theme
+├── types/             # TypeScript interfaces
+└── utils/             # Helpers and constants
+```
+
+## API Integration
+
+The frontend communicates with the SaaS Guard backend via REST APIs:
+
+- `/api/v1/permissions` – Check user permissions
+- `/api/v1/usage/record` – Record feature usage
+- `/api/v1/users/sync` – Sync users from your app
+- `/api/v1/users/plan` – Assign plans to users
+- `/api/v1/users/role` – Assign roles to users
+- `/api/admin/*` – Dashboard management endpoints
+
+See the [API Documentation](/docs) for full details.
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
+| `npm run type-check` | TypeScript type checking |
+
+## License
+
+MIT

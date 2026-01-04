@@ -31,20 +31,12 @@ export function LandingFooter() {
             {/* Social links */}
             <div className="flex items-center gap-3 pt-2">
               <a
-                href="https://github.com/saasguard"
+                href="https://github.com/rohit-jsfreaky/SaasGuard-frontend"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-background/50 text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all"
               >
                 <Github className="h-4 w-4" />
-              </a>
-              <a
-                href="https://twitter.com/saasguard"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-background/50 text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all"
-              >
-                <Twitter className="h-4 w-4" />
               </a>
               <a
                 href="mailto:rohitkashyapmrt@gmail.com"
@@ -109,9 +101,8 @@ export function LandingFooter() {
               &copy; {currentYear} SaaS Guard, Inc. All rights reserved.
             </p>
             <p className="flex items-center gap-1 text-xs text-muted-foreground">
-              Built with{" "}
-              <Heart className="h-3 w-3 text-red-500 fill-red-500" /> by Rohit
-              Kashyap
+              Built with <Heart className="h-3 w-3 text-red-500 fill-red-500" />{" "}
+              by Rohit Kashyap
             </p>
           </div>
         </div>
